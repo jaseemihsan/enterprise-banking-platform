@@ -1,2 +1,5 @@
+/home/admin_01/banking-app/src/main/java/com/bank/config/DBConnection.java
 /home/admin_01/banking-app/src/main/java/com/bank/controller/LoginServlet.java
-/home/admin_01/banking-app/src/main/java/com/bank/model/user.java
+/home/admin_01/banking-app/src/main/java/com/bank/dao/UserDAO.java
+/home/admin_01/banking-app/src/main/java/com/bank/model/User.java
+/home/admin_01/banking-app/src/main/java/com/bank/service/LoginService.java
