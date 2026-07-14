@@ -1,0 +1,26 @@
+# Maven
+target/
+
+# Logs
+*.log
+
+# IDE
+.idea/
+.vscode/
+
+# Java
+*.class
+
+# Environment
+.env
+
+# Backup
+database/backup/*
+!database/backup/.gitkeep
+
+# Grafana
+monitoring/grafana/data/
+
+# OS Files
+.DS_Store
+Thumbs.db

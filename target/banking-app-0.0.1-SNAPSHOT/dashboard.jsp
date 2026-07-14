@@ -1,31 +1,213 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-</head>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.bank.model.Dashboard" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.bank.model.Customer" %>
 
-<body>
+<%
+Dashboard dashboard = (Dashboard) request.getAttribute("dashboard");
 
-<h1>Enterprise Banking Dashboard</h1>
+List<Customer> recentCustomers =
+        (List<Customer>) request.getAttribute("recentCustomers");
+%>
 
-<hr>
+<%@ include file="includes/header.jsp" %>
+<%@ include file="includes/navbar.jsp" %>
 
-<h3>Welcome to ABC Bank</h3>
+<div class="container mt-4">
 
-<ul>
+    <h2 class="mb-4">Enterprise Banking Dashboard</h2>
 
-<li>Customers</li>
+    <!-- Dashboard Cards -->
+    <div class="row">
 
-<li>Accounts</li>
+        <div class="col-md-4 mb-3">
 
-<li>Transactions</li>
+            <div class="card shadow border-0">
 
-<li>Transfer Money</li>
+                <div class="card-body text-center">
 
-<li>Reports</li>
+                    <h5 class="card-title">👥 Customers</h5>
 
-</ul>
+                    <h1 class="display-5 text-primary">
+                        <%= dashboard.getTotalCustomers() %>
+                    </h1>
 
-</body>
+                </div>
 
-</html>
+            </div>
+
+        </div>
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body text-center">
+
+                    <h5 class="card-title">🏦 Accounts</h5>
+
+                    <h1 class="display-5 text-success">
+                        <%= dashboard.getTotalAccounts() %>
+                    </h1>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body text-center">
+
+                    <h5 class="card-title">💰 Transactions</h5>
+
+                    <h1 class="display-5 text-danger">
+                        <%= dashboard.getTotalTransactions() %>
+                    </h1>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<hr class="my-4">
+
+<h3>Recent Customers</h3>
+
+<table class="table table-striped table-bordered">
+
+    <thead class="table-dark">
+
+    <tr>
+
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+
+    </tr>
+
+    </thead>
+
+    <tbody>
+
+    <%
+    if(recentCustomers != null){
+
+        for(Customer customer : recentCustomers){
+    %>
+
+    <tr>
+
+        <td><%=customer.getId()%></td>
+
+        <td><%=customer.getFirstName()%></td>
+
+        <td><%=customer.getLastName()%></td>
+
+        <td><%=customer.getEmail()%></td>
+
+        <td><%=customer.getPhone()%></td>
+
+    </tr>
+
+    <%
+        }
+    }
+    %>
+
+    </tbody>
+
+</table>
+
+<hr class="my-4">
+
+<h3>Quick Navigation</h3>
+
+    <div class="row">
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h5>Customer Management</h5>
+
+                    <a href="<%=request.getContextPath()%>/customers"
+                       class="btn btn-primary mt-2">
+                        Open
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h5>Accounts</h5>
+
+                    <button class="btn btn-secondary mt-2" disabled>
+                        Coming Soon
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h5>Transactions</h5>
+
+                    <button class="btn btn-secondary mt-2" disabled>
+                        Coming Soon
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h5>Reports</h5>
+
+                    <button class="btn btn-secondary mt-2" disabled>
+                        Coming Soon
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%@ include file="includes/footer.jsp" %>
