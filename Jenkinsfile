@@ -28,16 +28,19 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                sh '''
                     mvn sonar:sonar \
                     -Dsonar.projectKey=enterprise-banking-platform \
-                    -Dsonar.projectName=EnterpriseBanking
-                    '''
-                }
+                    -Dsonar.projectName=EnterpriseBanking \
+                    -Dsonar.token=$SONAR_TOKEN
+                '''
             }
         }
+    }
+}
 
         stage('Build Docker Image') {
             steps {
