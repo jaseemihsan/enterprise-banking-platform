@@ -156,4 +156,78 @@ public class UserDAO {
     return false;
   }
 
+   
+    public User getUserById(int id) {
+
+    User user = null;
+
+    String sql = """
+            SELECT
+                u.id,
+                u.username,
+                u.role_id,
+                r.role_name,
+                u.status
+            FROM users u
+            JOIN roles r
+                ON u.role_id = r.id
+            WHERE u.id = ?
+            """;
+
+    try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)
+    ) {
+
+        statement.setInt(1, id);
+
+        ResultSet rs = statement.executeQuery();
+
+        if (rs.next()) {
+
+            user = new User();
+
+            user.setId(rs.getInt("id"));
+            user.setUsername(rs.getString("username"));
+            user.setRoleId(rs.getInt("role_id"));
+            user.setRoleName(rs.getString("role_name"));
+            user.setStatus(rs.getString("status"));
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return user;
+}
+
+    public boolean updateUser(User user) {
+
+    String sql = """
+            UPDATE users
+            SET username = ?,
+                role_id = ?,
+                status = ?
+            WHERE id = ?
+            """;
+
+    try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)
+    ) {
+
+        statement.setString(1, user.getUsername());
+        statement.setInt(2, user.getRoleId());
+        statement.setString(3, user.getStatus());
+        statement.setInt(4, user.getId());
+
+        return statement.executeUpdate() > 0;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+
 }

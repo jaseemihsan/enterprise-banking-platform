@@ -25,4 +25,12 @@ public class UserService {
 
         return userDAO.addUser(user);
     }
+
+    public User getUserById(int id) {
+    return userDAO.getUserById(id);
+}
+
+   public boolean updateUser(User user) {
+    return userDAO.updateUser(user);
+}
 }

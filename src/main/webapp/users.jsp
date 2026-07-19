@@ -59,7 +59,10 @@ for(User user : users){
     <td><%= user.getCreatedAt() %></td>
 
 <td>
-    <a href="#" class="btn btn-warning btn-sm">Edit</a>
+    <a href="${pageContext.request.contextPath}/users/edit?id=<%=user.getId()%>"
+   class="btn btn-warning btn-sm">
+    Edit
+</a>
 
     <a href="#" class="btn btn-danger btn-sm">Disable</a>
 </td>

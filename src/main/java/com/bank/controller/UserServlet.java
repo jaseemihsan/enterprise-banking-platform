@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet({
-        "/users",
-        "/users/add"
+    "/users",
+    "/users/add",
+    "/users/edit",
+    "/users/update"
 })
 public class UserServlet extends HttpServlet {
 
@@ -45,6 +47,19 @@ protected void doGet(HttpServletRequest request,
 
             break;
 
+	case "/users/edit":
+
+    int id = Integer.parseInt(request.getParameter("id"));
+
+    User user = userService.getUserById(id);
+
+    request.setAttribute("user", user);
+
+    request.getRequestDispatcher("/edit-user.jsp")
+            .forward(request, response);
+
+    break;
+
         default:
 
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -52,7 +67,8 @@ protected void doGet(HttpServletRequest request,
     }
   }
 
-       @Override
+
+  @Override
 protected void doPost(HttpServletRequest request,
                       HttpServletResponse response)
         throws ServletException, IOException {
@@ -67,7 +83,6 @@ protected void doPost(HttpServletRequest request,
         String status = request.getParameter("status");
 
         User user = new User();
-
         user.setUsername(username);
         user.setPassword(password);
         user.setRoleId(roleId);
@@ -81,11 +96,30 @@ protected void doPost(HttpServletRequest request,
 
         } else {
 
-            request.setAttribute("error",
-                    "Username already exists.");
+            request.setAttribute("error", "Username already exists.");
 
             request.getRequestDispatcher("/add-user.jsp")
                     .forward(request, response);
+        }
+
+    } else if ("/users/update".equals(path)) {
+
+        User user = new User();
+
+        user.setId(Integer.parseInt(request.getParameter("id")));
+        user.setUsername(request.getParameter("username"));
+        user.setRoleId(Integer.parseInt(request.getParameter("roleId")));
+        user.setStatus(request.getParameter("status"));
+
+        boolean updated = userService.updateUser(user);
+
+        if (updated) {
+
+            response.sendRedirect(request.getContextPath() + "/users");
+
+        } else {
+
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }
