@@ -1,3 +1,10 @@
+<%
+String username=(String)session.getAttribute("username");
+
+String role=(String)session.getAttribute("role");
+%>
+
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 
 <div class="container-fluid">
@@ -23,63 +30,87 @@
 
 <ul class="navbar-nav">
 
-<li class="nav-item">
-<a class="nav-link"
-   href="${pageContext.request.contextPath}/dashboard">
-Dashboard
-</a>
-</li>
+    <!-- Everyone -->
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<%=request.getContextPath()%>/dashboard">
+            Dashboard
+        </a>
+    </li>
 
-<li class="nav-item">
-<a class="nav-link"
-   href="${pageContext.request.contextPath}/customers">
-Customers
-</a>
-</li>
+    <!-- ADMIN & MANAGER -->
+    <% if ("ADMIN".equals(role) || "MANAGER".equals(role)) { %>
 
-<li class="nav-item">
-<a class="nav-link"
-   href="<%=request.getContextPath()%>/accounts">
-Accounts
-</a>
-</li>
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<%=request.getContextPath()%>/customers">
+            Customers
+        </a>
+    </li>
 
-<li class="nav-item">
-<a class="nav-link" href="#">
-Transactions
-</a>
-</li>
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<%=request.getContextPath()%>/accounts">
+            Accounts
+        </a>
+    </li>
 
-<li class="nav-item">
-<a class="nav-link" href="#">
-Reports
-</a>
-</li>
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<%=request.getContextPath()%>/transactions">
+            Transactions
+        </a>
+    </li>
 
-<li class="nav-item">
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<%=request.getContextPath()%>/deposit">
+            Deposit
+        </a>
+    </li>
 
-<a
-class="nav-link"
-href="<%=request.getContextPath()%>/deposit">
-Deposit
-</a>
-</li>
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<%=request.getContextPath()%>/withdraw">
+            Withdraw
+        </a>
+    </li>
 
-<li class="nav-item">
-    <a class="nav-link"
-       href="<%=request.getContextPath()%>/withdraw">
-        Withdraw
-    </a>
-</li>
+    <% } %>
 
-<li class="nav-item">
-    <a class="nav-link"
-       href="<%=request.getContextPath()%>/transactions">
-        Transactions
-    </a>
-</li>
+    <!-- ADMIN ONLY -->
+    <% if ("ADMIN".equals(role)) { %>
+
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<%=request.getContextPath()%>/users">
+            User Management
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<%=request.getContextPath()%>/reports">
+            Reports
+        </a>
+    </li>
+
+    <% } %>
 
 </ul>
+
+ <div class="ms-auto text-white">
+
+        Welcome,
+        <strong><%=username%></strong>
+        (<%=role%>)
+
+        <a class="btn btn-light btn-sm ms-3"
+           href="<%=request.getContextPath()%>/logout">
+            Logout
+        </a>
+
+    </div>
 
 </div>
 

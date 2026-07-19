@@ -1,10 +1,13 @@
 package com.bank.model;
 
+import java.math.BigDecimal;
+
 public class Dashboard {
 
     private int totalCustomers;
     private int totalAccounts;
     private int totalTransactions;
+    private BigDecimal totalBalance;
 
     public int getTotalCustomers() {
         return totalCustomers;
@@ -28,5 +31,13 @@ public class Dashboard {
 
     public void setTotalTransactions(int totalTransactions) {
         this.totalTransactions = totalTransactions;
+    }
+
+    public BigDecimal getTotalBalance() {
+        return totalBalance;
+    }
+
+    public void setTotalBalance(BigDecimal totalBalance) {
+        this.totalBalance = totalBalance;
     }
 }

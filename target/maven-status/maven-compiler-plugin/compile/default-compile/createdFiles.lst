@@ -1,3 +1,4 @@
+com/bank/filter/AuthorizationFilter.class
 com/bank/service/TransferService.class
 com/bank/model/Dashboard.class
 com/bank/service/TransactionService.class
@@ -6,6 +7,7 @@ com/bank/service/AccountService.class
 com/bank/controller/LoginServlet.class
 com/bank/service/LoginService.class
 com/bank/service/CustomerService.class
+com/bank/controller/UserServlet.class
 com/bank/dao/AccountDAO.class
 com/bank/model/Customer.class
 com/bank/model/Transaction.class
@@ -16,8 +18,11 @@ com/bank/controller/DepositServlet.class
 com/bank/controller/DashboardServlet.class
 com/bank/dao/TransactionDAO.class
 com/bank/util/ReferenceGenerator.class
+com/bank/service/UserService.class
 com/bank/controller/WithdrawServlet.class
 com/bank/model/User.class
+com/bank/filter/AuthenticationFilter.class
+com/bank/controller/LogoutServlet.class
 com/bank/dao/CustomerDAO.class
 com/bank/service/WithdrawService.class
 com/bank/model/Account.class

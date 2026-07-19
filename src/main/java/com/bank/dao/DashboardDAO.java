@@ -49,6 +49,16 @@ public class DashboardDAO {
                 dashboard.setTotalTransactions(rs3.getInt(1));
             }
 
+	    PreparedStatement ps4 =
+        connection.prepareStatement(
+                "SELECT COALESCE(SUM(balance),0) FROM accounts");
+
+ResultSet rs4 = ps4.executeQuery();
+
+if (rs4.next()) {
+    dashboard.setTotalBalance(rs4.getBigDecimal(1));
+}
+
         } catch (Exception e) {
             e.printStackTrace();
         }

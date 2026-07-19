@@ -1,27 +1,29 @@
 package com.bank.model;
 
+import java.sql.Timestamp;
+
 public class User {
 
     private int id;
     private String username;
     private String password;
-    private String role;
+    private int roleId;
+    private String roleName;
     private String status;
+    private Timestamp createdAt;
 
     // Default Constructor
     public User() {
     }
 
     // Parameterized Constructor
-    public User(int id, String username, String password, String role, String status) {
+    public User(int id, String username, String password, String roleName, String status) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.roleName = roleName;
         this.status = status;
     }
-
-    // Getters and Setters
 
     public int getId() {
         return id;
@@ -47,12 +49,20 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public int getRoleId() {
+    return roleId;
+}
+
+public void setRoleId(int roleId) {
+    this.roleId = roleId;
+}
+
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
     public String getStatus() {
@@ -63,12 +73,21 @@ public class User {
         this.status = status;
     }
 
+    public Timestamp getCreatedAt() {
+    return createdAt;
+}
+
+public void setCreatedAt(Timestamp createdAt) {
+    this.createdAt = createdAt;
+}
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", role='" + role + '\'' +
+		", roleId=" + roleId +
+                ", roleName='" + roleName + '\'' +
                 ", status='" + status + '\'' +
                 '}';
     }

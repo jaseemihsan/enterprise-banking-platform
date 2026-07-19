@@ -3,6 +3,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.bank.model.Customer" %>
 
+
 <%
 Dashboard dashboard = (Dashboard) request.getAttribute("dashboard");
 
@@ -20,7 +21,7 @@ List<Customer> recentCustomers =
     <!-- Dashboard Cards -->
     <div class="row">
 
-        <div class="col-md-4 mb-3">
+        <div class="col-lg-3 col-md-6 mb-3">
 
             <div class="card shadow border-0">
 
@@ -38,7 +39,7 @@ List<Customer> recentCustomers =
 
         </div>
 
-        <div class="col-md-4 mb-3">
+        <div class="col-lg-3 col-md-6 mb-3">
 
             <div class="card shadow border-0">
 
@@ -56,7 +57,7 @@ List<Customer> recentCustomers =
 
         </div>
 
-        <div class="col-md-4 mb-3">
+        <div class="col-lg-3 col-md-6 mb-3">
 
             <div class="card shadow border-0">
 
@@ -73,6 +74,24 @@ List<Customer> recentCustomers =
             </div>
 
         </div>
+
+    <div class="col-lg-3 col-md-6 mb-3">
+
+    <div class="card border-0 shadow text-white bg-warning">
+
+        <div class="card-body text-center">
+
+            <h5>Total Balance</h5>
+
+            <h2>
+                AED <%= dashboard.getTotalBalance() %>
+            </h2>
+
+        </div>
+
+    </div>
+
+</div>
 
     </div>
 
@@ -160,9 +179,10 @@ List<Customer> recentCustomers =
 
                     <h5>Accounts</h5>
 
-                    <button class="btn btn-secondary mt-2" disabled>
-                        Coming Soon
-                    </button>
+                    <a href="<%=request.getContextPath()%>/accounts"
+   class="btn btn-success">
+Open
+</a>
 
                 </div>
 
@@ -178,9 +198,10 @@ List<Customer> recentCustomers =
 
                     <h5>Transactions</h5>
 
-                    <button class="btn btn-secondary mt-2" disabled>
-                        Coming Soon
-                    </button>
+                    <a href="<%=request.getContextPath()%>/transactions"
+   class="btn btn-success">
+Open
+</a>
 
                 </div>
 
@@ -196,9 +217,10 @@ List<Customer> recentCustomers =
 
                     <h5>Reports</h5>
 
-                    <button class="btn btn-secondary mt-2" disabled>
-                        Coming Soon
-                    </button>
+                    <a href="<%=request.getContextPath()%>/reports"
+   class="btn btn-warning">
+Open
+</a>
 
                 </div>
 

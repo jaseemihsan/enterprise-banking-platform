@@ -4,13 +4,17 @@
 /home/admin_01/banking-app/src/main/java/com/bank/controller/DashboardServlet.java
 /home/admin_01/banking-app/src/main/java/com/bank/controller/DepositServlet.java
 /home/admin_01/banking-app/src/main/java/com/bank/controller/LoginServlet.java
+/home/admin_01/banking-app/src/main/java/com/bank/controller/LogoutServlet.java
 /home/admin_01/banking-app/src/main/java/com/bank/controller/TransactionHistoryServlet.java
+/home/admin_01/banking-app/src/main/java/com/bank/controller/UserServlet.java
 /home/admin_01/banking-app/src/main/java/com/bank/controller/WithdrawServlet.java
 /home/admin_01/banking-app/src/main/java/com/bank/dao/AccountDAO.java
 /home/admin_01/banking-app/src/main/java/com/bank/dao/CustomerDAO.java
 /home/admin_01/banking-app/src/main/java/com/bank/dao/DashboardDAO.java
 /home/admin_01/banking-app/src/main/java/com/bank/dao/TransactionDAO.java
 /home/admin_01/banking-app/src/main/java/com/bank/dao/UserDAO.java
+/home/admin_01/banking-app/src/main/java/com/bank/filter/AuthenticationFilter.java
+/home/admin_01/banking-app/src/main/java/com/bank/filter/AuthorizationFilter.java
 /home/admin_01/banking-app/src/main/java/com/bank/model/Account.java
 /home/admin_01/banking-app/src/main/java/com/bank/model/Customer.java
 /home/admin_01/banking-app/src/main/java/com/bank/model/Dashboard.java
@@ -23,6 +27,7 @@
 /home/admin_01/banking-app/src/main/java/com/bank/service/LoginService.java
 /home/admin_01/banking-app/src/main/java/com/bank/service/TransactionService.java
 /home/admin_01/banking-app/src/main/java/com/bank/service/TransferService.java
+/home/admin_01/banking-app/src/main/java/com/bank/service/UserService.java
 /home/admin_01/banking-app/src/main/java/com/bank/service/WithdrawService.java
 /home/admin_01/banking-app/src/main/java/com/bank/util/ReferenceGenerator.java
 /home/admin_01/banking-app/src/main/java/com/bank/util/TransactionType.java

@@ -42,17 +42,20 @@ pipeline {
     }
 }
 
-        stage('Build Docker Image') {
-            steps {
-                sh '''
-                docker build \
-                -t banking-app:${BUILD_NUMBER} \
-                -f deployment/docker/Dockerfile .
-                '''
-            }
-        }
+        stage('Docker Build') {
+    steps {
+        script {
+            IMAGE_NAME = "banking-app"
+            IMAGE_TAG = "build-${BUILD_NUMBER}"
 
+            sh """
+            docker build \
+            -t ${IMAGE_NAME}:${IMAGE_TAG} \
+            -f deployment/docker/Dockerfile .
+            """
+        }
     }
+}
 
     post {
 

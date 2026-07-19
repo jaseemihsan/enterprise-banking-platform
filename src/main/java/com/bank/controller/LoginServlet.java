@@ -31,13 +31,18 @@ public class LoginServlet extends HttpServlet {
 
             HttpSession session = request.getSession();
 
-            session.setAttribute("loggedUser", user);
+            session.setAttribute("user", user);
+
+            session.setAttribute("username", user.getUsername());
+
+            session.setAttribute("role", user.getRoleName());
 
             response.sendRedirect(request.getContextPath() + "/dashboard");
 
         } else {
 
-            response.sendRedirect("login.jsp?error=Invalid Username or Password");
+             request.setAttribute("error", "Invalid Username or Password");
+             request.getRequestDispatcher("/login.jsp").forward(request, response);
 
         }
 
