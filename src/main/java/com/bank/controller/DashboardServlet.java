@@ -27,6 +27,14 @@ public class DashboardServlet extends HttpServlet {
                 "recentCustomers",
                 dashboardService.getRecentCustomers());
 
+	request.setAttribute(
+        "statistics",
+        dashboardService.getStatistics());
+              
+	request.setAttribute(
+        "transactionTrend",
+        dashboardService.getTransactionTrend());
+
         request.getRequestDispatcher("/dashboard.jsp")
                 .forward(request, response);
     }

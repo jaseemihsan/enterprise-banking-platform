@@ -56,6 +56,12 @@ String role=(String)session.getAttribute("role");
     </li>
 
     <li class="nav-item">
+    <a class="nav-link" href="${pageContext.request.contextPath}/transfer">
+        Fund Transfer
+    </a>
+</li>
+
+    <li class="nav-item">
         <a class="nav-link"
            href="<%=request.getContextPath()%>/transactions">
             Transactions
@@ -75,6 +81,13 @@ String role=(String)session.getAttribute("role");
             Withdraw
         </a>
     </li>
+
+    <li class="nav-item">
+        <a class="nav-link"
+           href="<%=request.getContextPath()%>/statement">
+        Account Statement
+    </a>
+</li>
 
     <% } %>
 

@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.math.*;
 
 public class AccountDAO {
 
@@ -444,6 +445,58 @@ public Account getAccountById(Connection connection, int id) {
 
     return null;
 
+}
+
+public List<Account> getAccountReport() {
+
+    List<Account> accounts = new ArrayList<>();
+
+    String sql = """
+        SELECT
+            a.id,
+            a.account_number,
+            a.account_type,
+            a.balance,
+            a.status,
+            c.first_name,
+            c.last_name,
+            c.email
+        FROM accounts a
+        JOIN customers c
+            ON a.customer_id = c.id
+        ORDER BY a.id
+        """;
+
+    try (
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()
+    ) {
+
+        while (rs.next()) {
+
+            Account account = new Account();
+
+            account.setId(rs.getInt("id"));
+            account.setAccountNumber(rs.getString("account_number"));
+            account.setAccountType(rs.getString("account_type"));
+            account.setBalance(rs.getBigDecimal("balance"));
+            account.setStatus(rs.getString("status"));
+
+            account.setCustomerName(
+                    rs.getString("first_name") + " " +
+                    rs.getString("last_name"));
+
+            account.setCustomerEmail(rs.getString("email"));
+
+            accounts.add(account);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return accounts;
 }
 
 }

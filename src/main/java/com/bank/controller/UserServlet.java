@@ -14,7 +14,10 @@ import java.util.List;
     "/users",
     "/users/add",
     "/users/edit",
-    "/users/update"
+    "/users/update",
+    "/users/status",
+    "/users/reset",
+    "/users/reset-password"
 })
 public class UserServlet extends HttpServlet {
 
@@ -57,9 +60,33 @@ protected void doGet(HttpServletRequest request,
 
     request.getRequestDispatcher("/edit-user.jsp")
             .forward(request, response);
+    break;
+
+    case "/users/status": 
+
+    int userId = Integer.parseInt(request.getParameter("id"));
+    String status = request.getParameter("status");
+
+    userService.updateStatus(userId, status);
+
+    response.sendRedirect(request.getContextPath() + "/users");
+    break;
+
+
+case "/users/reset": 
+
+    int resetUserId = Integer.parseInt(request.getParameter("id"));
+
+    User resetUser = userService.getUserById(resetUserId);
+
+    request.setAttribute("user", resetUser);
+
+    request.getRequestDispatcher("/reset-password.jsp")
+           .forward(request, response);
 
     break;
 
+    
         default:
 
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

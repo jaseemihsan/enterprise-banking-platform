@@ -1,8 +1,10 @@
 package com.bank.dao;
 
+import com.bank.dto.TransactionTrend;
 import com.bank.config.DBConnection;
 import com.bank.model.Dashboard;
 import com.bank.model.Customer;
+import java.math.BigDecimal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -106,4 +108,185 @@ if (rs4.next()) {
 
     return customers;
   }
+
+    public int getCustomerCount() {
+
+    String sql = "SELECT COUNT(*) FROM customers";
+
+    try (
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()
+    ) {
+
+        if (rs.next()) {
+            return rs.getInt(1);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return 0;
+}
+
+public int getAccountCount() {
+
+    String sql = "SELECT COUNT(*) FROM accounts";
+
+    try (
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()
+    ) {
+
+        if (rs.next()) {
+            return rs.getInt(1);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return 0;
+}
+
+public int getTransactionCount() {
+
+    String sql = "SELECT COUNT(*) FROM transactions";
+
+    try (
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()
+    ) {
+
+        if (rs.next()) {
+            return rs.getInt(1);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return 0;
+}
+
+public BigDecimal getTotalDeposits() {
+
+    String sql = """
+        SELECT COALESCE(SUM(amount),0)
+        FROM transactions
+        WHERE transaction_type='DEPOSIT'
+        """;
+
+    try (
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()
+    ) {
+
+        if (rs.next()) {
+            return rs.getBigDecimal(1);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return BigDecimal.ZERO;
+}
+
+public BigDecimal getTotalWithdrawals() {
+
+    String sql = """
+        SELECT COALESCE(SUM(amount),0)
+        FROM transactions
+        WHERE transaction_type='WITHDRAW'
+        """;
+
+    try (
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()
+    ) {
+
+        if (rs.next()) {
+            return rs.getBigDecimal(1);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return BigDecimal.ZERO;
+}
+
+public BigDecimal getTotalTransfers() {
+
+    String sql = """
+        SELECT COALESCE(SUM(amount),0)
+        FROM transactions
+        WHERE transaction_type='TRANSFER_DEBIT'
+        """;
+
+    try (
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()
+    ) {
+
+        if (rs.next()) {
+            return rs.getBigDecimal(1);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return BigDecimal.ZERO;
+}
+
+public List<TransactionTrend> getTransactionTrend() {
+
+    List<TransactionTrend> trends =
+            new ArrayList<>();
+
+    String sql = """
+        SELECT
+            DATE_FORMAT(transaction_time,'%d %b') AS txn_date,    
+	COUNT(*) AS total
+        FROM transactions
+        GROUP BY DATE(transaction_time)
+        ORDER BY txn_date
+        """;
+
+    try (
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement statement =
+                connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()
+    ) {
+
+        while (rs.next()) {
+
+            TransactionTrend trend =
+                    new TransactionTrend();
+
+            trend.setDate(
+                    rs.getString("txn_date"));
+
+            trend.setCount(
+                    rs.getInt("total"));
+
+            trends.add(trend);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return trends;
+}
+
 }

@@ -3,6 +3,7 @@ package com.bank.dao;
 import com.bank.config.DBConnection;
 import com.bank.model.User;
 
+import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -224,6 +225,29 @@ public class UserDAO {
         return statement.executeUpdate() > 0;
 
     } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+
+    public boolean updateStatus(int id, String status) {
+
+    String sql = """
+        UPDATE users
+        SET status = ?
+        WHERE id = ?
+        """;
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, status);
+        ps.setInt(2, id);
+
+        return ps.executeUpdate() > 0;
+
+    } catch (SQLException e) {
         e.printStackTrace();
     }
 

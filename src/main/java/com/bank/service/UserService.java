@@ -28,9 +28,13 @@ public class UserService {
 
     public User getUserById(int id) {
     return userDAO.getUserById(id);
-}
+    }
 
    public boolean updateUser(User user) {
     return userDAO.updateUser(user);
-}
+    }
+
+  public boolean updateStatus(int id, String status) {
+    return userDAO.updateStatus(id, status);
+    }
 }

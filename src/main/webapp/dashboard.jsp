@@ -2,6 +2,8 @@
 <%@ page import="com.bank.model.Dashboard" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.bank.model.Customer" %>
+<%@ page import="com.bank.dto.DashboardStatistics" %>
+<%@ page import="com.bank.dto.TransactionTrend" %>
 
 
 <%
@@ -9,6 +11,16 @@ Dashboard dashboard = (Dashboard) request.getAttribute("dashboard");
 
 List<Customer> recentCustomers =
         (List<Customer>) request.getAttribute("recentCustomers");
+%>
+
+<%
+DashboardStatistics statistics =
+    (DashboardStatistics) request.getAttribute("statistics");
+%>
+
+<%
+List<TransactionTrend> transactionTrend =
+        (List<TransactionTrend>) request.getAttribute("transactionTrend");
 %>
 
 <%@ include file="includes/header.jsp" %>
@@ -146,6 +158,86 @@ List<Customer> recentCustomers =
 
 </table>
 
+<div class="row">
+
+    <div class="col-lg-8">
+
+        <div class="card shadow">
+
+            <div class="card-header bg-primary text-white">
+
+                <h5 class="mb-0">
+                    Transaction Analytics
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <canvas id="transactionChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+
+        <div class="card shadow">
+
+            <div class="card-header bg-success text-white">
+
+                <h5 class="mb-0">
+                    Bank Analytics
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <table class="table table-borderless">
+
+                    <tr>
+                        <th>Customers</th>
+                        <td><%=statistics.getCustomerCount()%></td>
+                    </tr>
+
+                    <tr>
+                        <th>Accounts</th>
+                        <td><%=statistics.getAccountCount()%></td>
+                    </tr>
+
+                    <tr>
+                        <th>Transactions</th>
+                        <td><%=statistics.getTransactionCount()%></td>
+                    </tr>
+
+                    <tr>
+                        <th>Deposits</th>
+                        <td>AED <%=statistics.getTotalDeposits()%></td>
+                    </tr>
+
+                    <tr>
+                        <th>Withdrawals</th>
+                        <td>AED <%=statistics.getTotalWithdrawals()%></td>
+                    </tr>
+
+                    <tr>
+                        <th>Transfers</th>
+                        <td>AED <%=statistics.getTotalTransfers()%></td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 <hr class="my-4">
 
 <h3>Quick Navigation</h3>
@@ -232,4 +324,212 @@ Open
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const deposits =
+    <%= statistics.getTotalDeposits() %>;
+
+const withdrawals =
+    <%= statistics.getTotalWithdrawals() %>;
+
+const transfers =
+    <%= statistics.getTotalTransfers() %>;
+
+const ctx = document.getElementById("transactionChart");
+
+new Chart(ctx, {
+
+    type: "pie",
+
+    data: {
+
+        labels: [
+            "Deposits",
+            "Withdrawals",
+            "Transfers"
+        ],
+
+        datasets: [{
+
+            label: "Transaction Summary",
+
+            data: [
+                deposits,
+                withdrawals,
+                transfers
+            ],
+
+            backgroundColor: [
+                "#0d6efd",
+                "#dc3545",
+                "#ffc107"
+            ],
+
+            borderWidth: 2
+
+        }]
+
+    }
+
+});
+
+</script>
+
+<h3 class="mt-4">System Statistics</h3>
+
+<canvas id="systemChart"></canvas>
+
+<script>
+
+const customers =
+    <%= statistics.getCustomerCount() %>;
+
+const accounts =
+    <%= statistics.getAccountCount() %>;
+
+const transactions =
+    <%= statistics.getTransactionCount() %>;
+
+</script>
+
+<script>
+
+const ctx2 =
+document.getElementById("systemChart");
+
+new Chart(ctx2, {
+
+    type: "bar",
+
+    data: {
+
+        labels: [
+            "Customers",
+            "Accounts",
+            "Transactions"
+        ],
+
+        datasets: [{
+
+            label: "System Statistics",
+
+            data: [
+                customers,
+                accounts,
+                transactions
+            ],
+
+            backgroundColor: [
+                "#0d6efd",
+                "#198754",
+                "#dc3545"
+            ]
+
+        }]
+
+    }
+
+});
+
+</script>
+
+<div class="card shadow mt-4">
+
+    <div class="card-header bg-info text-white">
+
+        <h5 class="mb-0">
+            Transaction Trend
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <canvas id="trendChart"></canvas>
+
+    </div>
+
+</div>
+
+<script>
+
+const trendLabels = [
+
+<%
+for(int i = 0; i < transactionTrend.size(); i++){
+
+    TransactionTrend trend =
+            transactionTrend.get(i);
+%>
+
+"<%=trend.getDate()%>"
+
+<%
+if(i < transactionTrend.size()-1){
+%>
+,
+<%
+}
+}
+%>
+
+];
+
+const trendData = [
+
+<%
+for(int i = 0; i < transactionTrend.size(); i++){
+
+    TransactionTrend trend =
+            transactionTrend.get(i);
+%>
+
+<%=trend.getCount()%>
+
+<%
+if(i < transactionTrend.size()-1){
+%>
+,
+<%
+}
+}
+%>
+
+];
+
+	const trendCtx =
+document.getElementById("trendChart");
+
+new Chart(trendCtx, {
+
+    type: "line",
+
+    data: {
+
+        labels: trendLabels,
+
+        datasets: [{
+
+            label: "Transactions",
+
+            data: trendData,
+
+            borderColor: "#0d6efd",
+
+            backgroundColor: "#0d6efd",
+
+            fill: false,
+
+            tension: 0.3
+
+        }]
+
+    }
+
+});
+
+</script>
 <%@ include file="includes/footer.jsp" %>
+

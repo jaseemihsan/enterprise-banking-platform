@@ -1,6 +1,8 @@
 package com.bank.model;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public class Account {
 
@@ -12,6 +14,7 @@ public class Account {
     private String status;
     private String customerName;
     private String customerEmail;
+    private Timestamp createdAt;
 
     public Account() {
     }
@@ -79,4 +82,8 @@ public class Account {
     public void setCustomerEmail(String customerEmail) {
           this.customerEmail = customerEmail;
     } 
+
+    public void setCreatedAt(Timestamp createdAt) {
+    this.createdAt = createdAt;
+}
 }

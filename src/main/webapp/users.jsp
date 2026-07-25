@@ -59,12 +59,33 @@ for(User user : users){
     <td><%= user.getCreatedAt() %></td>
 
 <td>
+
     <a href="${pageContext.request.contextPath}/users/edit?id=<%=user.getId()%>"
-   class="btn btn-warning btn-sm">
-    Edit
+       class="btn btn-warning btn-sm">
+        Edit
+    </a>
+
+    <a href="${pageContext.request.contextPath}/users/reset?id=<%=user.getId()%>"
+   class="btn btn-secondary btn-sm">
+    Reset Password
 </a>
 
-    <a href="#" class="btn btn-danger btn-sm">Disable</a>
+    <% if ("ACTIVE".equals(user.getStatus())) { %>
+
+        <a href="${pageContext.request.contextPath}/users/status?id=<%=user.getId()%>&status=INACTIVE"
+           class="btn btn-danger btn-sm">
+            Disable
+        </a>
+
+    <% } else { %>
+
+        <a href="${pageContext.request.contextPath}/users/status?id=<%=user.getId()%>&status=ACTIVE"
+           class="btn btn-success btn-sm">
+            Activate
+        </a>
+
+    <% } %>
+
 </td>
 
 </tr>

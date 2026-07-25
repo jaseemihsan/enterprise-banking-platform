@@ -106,6 +106,12 @@ statement.setString(7, transaction.getRemarks());
 
                 transaction.setAmount(
                         rs.getBigDecimal("amount"));
+                
+                transaction.setBalanceBefore(
+		        rs.getBigDecimal("balance_before"));
+
+                transaction.setBalanceAfter(
+			rs.getBigDecimal("balance_after"));
 
                 transaction.setReferenceNo(
                         rs.getString("reference_no"));
@@ -258,4 +264,208 @@ public List<Transaction> getAllTransactions() {
 
 }
 
+     public List<Transaction> getTodayTransactions() {
+
+    List<Transaction> transactions = new ArrayList<>();
+
+    String sql =
+            """
+            SELECT *
+            FROM transactions
+            WHERE DATE(transaction_time)=CURDATE()
+            ORDER BY transaction_time DESC
+            """;
+
+    try (
+        Connection conn = DBConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()
+    ) {
+
+        while (rs.next()) {
+
+            Transaction transaction = new Transaction();
+
+            transaction.setId(rs.getInt("id"));
+            transaction.setAccountId(rs.getInt("account_id"));
+            transaction.setTransactionType(rs.getString("transaction_type"));
+            transaction.setAmount(rs.getBigDecimal("amount"));
+            transaction.setBalanceBefore(rs.getBigDecimal("balance_before"));
+            transaction.setBalanceAfter(rs.getBigDecimal("balance_after"));
+            transaction.setReferenceNo(rs.getString("reference_no"));
+            transaction.setRemarks(rs.getString("remarks"));
+            transaction.setTransactionTime(rs.getTimestamp("transaction_time"));
+
+            transactions.add(transaction);
+        }
+
+
+for (Transaction t : transactions) {
+    System.out.println(
+        t.getId() + " " +
+        t.getTransactionType() + " " +
+        t.getAmount()
+    );
+}
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return transactions;
+     }
+
+    
+     public List<Transaction> getDepositTransactions() {
+
+    List<Transaction> transactions = new ArrayList<>();
+
+    String sql = """
+        SELECT *
+        FROM transactions
+        WHERE transaction_type='DEPOSIT'
+        ORDER BY transaction_time DESC
+        """;
+
+    try (
+        Connection conn = DBConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()
+    ) {
+
+        while (rs.next()) {
+
+            Transaction transaction = new Transaction();
+
+            transaction.setId(rs.getInt("id"));
+            transaction.setAccountId(rs.getInt("account_id"));
+            transaction.setTransactionType(rs.getString("transaction_type"));
+            transaction.setAmount(rs.getBigDecimal("amount"));
+            transaction.setBalanceBefore(rs.getBigDecimal("balance_before"));
+            transaction.setBalanceAfter(rs.getBigDecimal("balance_after"));
+            transaction.setReferenceNo(rs.getString("reference_no"));
+            transaction.setRemarks(rs.getString("remarks"));
+            transaction.setTransactionTime(rs.getTimestamp("transaction_time"));
+
+            transactions.add(transaction);
+        }
+
+
+for (Transaction t : transactions) {
+    System.out.println(
+        t.getId() + " " +
+        t.getTransactionType() + " " +
+        t.getAmount()
+    );
+}
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return transactions;
+     }
+
+     public List<Transaction> getWithdrawTransactions() {
+
+    List<Transaction> transactions = new ArrayList<>();
+
+    String sql = """
+        SELECT *
+        FROM transactions
+        WHERE transaction_type='WITHDRAW'
+        ORDER BY transaction_time DESC
+        """;
+
+     try (
+        Connection conn = DBConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()
+    ) {
+
+        while (rs.next()) {
+
+            Transaction transaction = new Transaction();
+
+            transaction.setId(rs.getInt("id"));
+            transaction.setAccountId(rs.getInt("account_id"));
+            transaction.setTransactionType(rs.getString("transaction_type"));
+            transaction.setAmount(rs.getBigDecimal("amount"));
+            transaction.setBalanceBefore(rs.getBigDecimal("balance_before"));
+            transaction.setBalanceAfter(rs.getBigDecimal("balance_after"));
+            transaction.setReferenceNo(rs.getString("reference_no"));
+            transaction.setRemarks(rs.getString("remarks"));
+            transaction.setTransactionTime(rs.getTimestamp("transaction_time"));
+
+            transactions.add(transaction);
+        }
+
+
+for (Transaction t : transactions) {
+    System.out.println(
+        t.getId() + " " +
+        t.getTransactionType() + " " +
+        t.getAmount()
+    );
+}
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return transactions;
+     }
+
+
+
+      public List<Transaction> getTransferTransactions() {
+
+    List<Transaction> transactions = new ArrayList<>();
+
+    String sql = """
+        SELECT *
+        FROM transactions
+        WHERE transaction_type IN
+        ('TRANSFER_DEBIT','TRANSFER_CREDIT')
+        ORDER BY transaction_time DESC
+        """;
+
+try (
+        Connection conn = DBConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()
+    ) {
+
+        while (rs.next()) {
+
+            Transaction transaction = new Transaction();
+
+            transaction.setId(rs.getInt("id"));
+            transaction.setAccountId(rs.getInt("account_id"));
+            transaction.setTransactionType(rs.getString("transaction_type"));
+            transaction.setAmount(rs.getBigDecimal("amount"));
+            transaction.setBalanceBefore(rs.getBigDecimal("balance_before"));
+            transaction.setBalanceAfter(rs.getBigDecimal("balance_after"));
+            transaction.setReferenceNo(rs.getString("reference_no"));
+            transaction.setRemarks(rs.getString("remarks"));
+            transaction.setTransactionTime(rs.getTimestamp("transaction_time"));
+
+            transactions.add(transaction);
+        }
+
+
+for (Transaction t : transactions) {
+    System.out.println(
+        t.getId() + " " +
+        t.getTransactionType() + " " +
+        t.getAmount()
+    );
+}
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return transactions;
+     }
 }
