@@ -7,8 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class CustomerDAO {
+
+	private static final Logger logger =
+        LoggerFactory.getLogger(CustomerDAO.class);
     
 	public List<Customer> getAllCustomers() {
 
@@ -24,6 +30,7 @@ public class CustomerDAO {
 
         while (rs.next()) {
 
+
             Customer customer = new Customer();
 
             customer.setId(rs.getInt("id"));
@@ -35,10 +42,11 @@ public class CustomerDAO {
             customers.add(customer);
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
 
+
+} catch (Exception e) {
+    logger.error("Error retrieving customers", e);
+}
     return customers;
 } 
 
@@ -81,10 +89,9 @@ public class CustomerDAO {
             customers.add(customer);
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-
+} catch (Exception e) {
+    logger.error("Error searching customers. Keyword: {}", keyword, e);
+}
     return customers;
 }
 
@@ -117,10 +124,9 @@ public class CustomerDAO {
 
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-
+} catch (Exception e) {
+    logger.error("Error retrieving customer with ID {}", id, e);
+}
     return null;
 }
     
@@ -143,16 +149,22 @@ public class CustomerDAO {
             statement.setString(2, customer.getLastName());
             statement.setString(3, customer.getEmail());
             statement.setString(4, customer.getPhone());
+        
+       int rows = statement.executeUpdate();
 
-            return statement.executeUpdate() > 0;
+if (rows > 0) {
+    logger.info("Customer {} added successfully",
+            customer.getEmail());
+}
+
+return rows > 0;
 
         } catch (Exception e) {
-            e.printStackTrace();
-        }
+        logger.error("Error adding customer", e);
 
         return false;
     }
-
+	  }
           public boolean updateCustomer(Customer customer) {
 
     String sql = """
@@ -179,14 +191,20 @@ public class CustomerDAO {
         statement.setString(4, customer.getPhone());
         statement.setInt(5, customer.getId());
 
-        return statement.executeUpdate() > 0;
+      int rows = statement.executeUpdate();
 
-    } catch (Exception e) {
+if (rows > 0) {
+    logger.info("Customer {} updated successfully",
+            customer.getId());
+}
 
-        e.printStackTrace();
+return rows > 0;
 
-    }
+} catch (Exception e) {
 
+    logger.error("Error updating customer {}", customer.getId(), e);
+
+}
     return false;
 
    }
@@ -203,14 +221,18 @@ public class CustomerDAO {
 
         statement.setInt(1, id);
 
-        return statement.executeUpdate() > 0;
+int rows = statement.executeUpdate();
 
-    } catch (Exception e) {
+if (rows > 0) {
+    logger.info("Customer {} deleted successfully", id);
+}
 
-        e.printStackTrace();
+return rows > 0;
+      } catch (Exception e) {
 
-    }
+    logger.error("Error deleting customer {}", id, e);
 
+}
     return false;
   }
 

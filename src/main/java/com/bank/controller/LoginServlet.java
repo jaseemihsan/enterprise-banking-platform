@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.bank.model.User;
 import com.bank.service.LoginService;
+import com.bank.service.AuditLogService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,6 +16,10 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
+
+	private final LoginService loginService = new LoginService();
+        private final AuditLogService auditLogService = new AuditLogService();
+
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)
@@ -22,8 +27,6 @@ public class LoginServlet extends HttpServlet {
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-
-        LoginService loginService = new LoginService();
 
         User user = loginService.authenticate(username, password);
 
@@ -36,6 +39,13 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("username", user.getUsername());
 
             session.setAttribute("role", user.getRoleName());
+
+	    auditLogService.log(
+                   user.getUsername(),
+                   "LOGIN",
+                   "Authentication",
+                   "Login successful",
+                   request.getRemoteAddr());
 
             response.sendRedirect(request.getContextPath() + "/dashboard");
 

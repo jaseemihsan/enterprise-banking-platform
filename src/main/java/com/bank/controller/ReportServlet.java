@@ -14,10 +14,17 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 
 @WebServlet("/reports")
 public class ReportServlet extends HttpServlet {
+
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(ReportServlet.class);
 
       private final ReportService reportService =
         new ReportService();
@@ -33,6 +40,7 @@ public class ReportServlet extends HttpServlet {
 if ("daily".equals(type)) {
 
 	  if ("excel".equalsIgnoreCase(format)) {
+logger.info("Generating Daily Transaction Excel Report");
 
         TransactionReportExcel.generate(
                 reportService.getTodayTransactions(),
@@ -50,6 +58,7 @@ if ("daily".equals(type)) {
     } else if ("deposit".equals(type)) {
 
               if ("excel".equalsIgnoreCase(format)) {
+logger.info("Generating Deposit Excel Report");
 
         TransactionReportExcel.generate(
                 reportService.getDepositTransactions(),
@@ -69,6 +78,7 @@ if ("daily".equals(type)) {
     } else if ("withdraw".equals(type)) {
 
 	      if ("excel".equalsIgnoreCase(format)) {
+logger.info("Generating Withdrawal Excel Report");
 
         TransactionReportExcel.generate(
                 reportService.getWithdrawTransactions(),
@@ -87,6 +97,7 @@ if ("daily".equals(type)) {
     } else if ("transfer".equals(type)) {
 
 	     if ("excel".equalsIgnoreCase(format)) {
+logger.info("Generating Transfer Excel Report");
 
         TransactionReportExcel.generate(
                 reportService.getTransferTransactions(),
@@ -108,8 +119,9 @@ if ("pdf".equalsIgnoreCase(format)) {
 
         response.setHeader(
                 "Content-Disposition",
-                "attachment; filename=customer-report.pdf");
+		"attachment; filename=customer-report.pdf");
 
+	logger.info("Generating Customer PDF Report");
         try {
 
             new CustomerReportPdf().export(
@@ -117,7 +129,7 @@ if ("pdf".equalsIgnoreCase(format)) {
                     response);
 
         } catch (DocumentException e) {
-
+logger.error("Error generating Customer PDF Report", e);
             throw new ServletException(e);
 
         }
@@ -125,14 +137,15 @@ if ("pdf".equalsIgnoreCase(format)) {
         return;
 
     } else if ("excel".equalsIgnoreCase(format)) {
-
+String username = (String) request.getSession().getAttribute("username");
+logger.info("User {} generated Customer Excel Report", username);
         try {
 
             CustomerReportExcel.generate(
                     reportService.getCustomerReport(),
                     response);
-
         } catch (IOException e) {
+    logger.error("Error generating Customer Excel Report", e);
 
             throw new ServletException(e);
 
@@ -149,35 +162,10 @@ request.setAttribute(
             "title",
             "Customer Report");
 
-
-} else if ("daily".equalsIgnoreCase(type)) {
-
-    if ("excel".equalsIgnoreCase(format)) {
-
-        return;
-    }
-
-} else if ("deposit".equalsIgnoreCase(type)) {
-
-    if ("excel".equalsIgnoreCase(format)) {
-        return;
-    }
-
-} else if ("withdraw".equalsIgnoreCase(type)) {
-
-    if ("excel".equalsIgnoreCase(format)) {
-        return;
-    }
-
-} else if ("transfer".equalsIgnoreCase(type)) {
-
-    if ("excel".equalsIgnoreCase(format)) {
-        return;
-    }
-
 } else if ("account".equals(type)) {
 
 	if ("excel".equalsIgnoreCase(format)) {
+logger.info("Generating Account Excel Report");
 
     AccountReportExcel.generate(
             reportService.getAccountReport(),
@@ -193,9 +181,11 @@ request.setAttribute(
             "title",
             "Account Report");
 }
-
+if (type != null && format == null) {
+logger.info("Opening {} report page", type);
+}
         request.getRequestDispatcher("/reports.jsp")
-                .forward(request, response);
+	.forward(request, response);
 
     }
 

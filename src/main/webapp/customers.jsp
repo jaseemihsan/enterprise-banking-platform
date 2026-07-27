@@ -5,12 +5,21 @@
 <%@ include file="includes/header.jsp" %>
 <%@ include file="includes/navbar.jsp" %>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Customer Registration</title>
-</head>
-<body>
+<%
+String sessionError = (String) session.getAttribute("error");
+
+if (sessionError != null) {
+%>
+
+<div class="alert alert-danger">
+    <%= sessionError %>
+</div>
+
+<%
+    session.removeAttribute("error");
+}
+%>
+
 
 <h2>ABC Bank - Customer Registration</h2>
 
@@ -114,7 +123,7 @@ if (customers != null) {
 
 <%
 String success = request.getParameter("success");
-String error = request.getParameter("error");
+String requestError = request.getParameter("error");
 
 if(success != null){
 %>
@@ -122,14 +131,12 @@ if(success != null){
 <%
 }
 
-if(error != null){
+if(requestError != null){
 %>
-<p style="color:red"><%=error%></p>
+<p style="color:red"><%=requestError%></p>
 <%
 }
 %>
 
-</body>
-</html>
 
 <%@ include file="includes/footer.jsp" %>

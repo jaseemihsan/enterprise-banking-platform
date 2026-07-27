@@ -1,5 +1,8 @@
 package com.bank.dao;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.bank.dto.TransactionTrend;
 import com.bank.config.DBConnection;
 import com.bank.model.Dashboard;
@@ -14,6 +17,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class DashboardDAO {
+
+
+        private static final Logger logger =
+        LoggerFactory.getLogger(DashboardDAO.class);
 
     public Dashboard getDashboardStats() {
 
@@ -253,13 +260,13 @@ public List<TransactionTrend> getTransactionTrend() {
             new ArrayList<>();
 
     String sql = """
-        SELECT
-            DATE_FORMAT(transaction_time,'%d %b') AS txn_date,    
-	COUNT(*) AS total
-        FROM transactions
-        GROUP BY DATE(transaction_time)
-        ORDER BY txn_date
-        """;
+    SELECT
+        DATE(transaction_time) AS txn_date,
+        COUNT(*) AS total
+    FROM transactions
+    GROUP BY DATE(transaction_time)
+    ORDER BY DATE(transaction_time)
+    """;
 
     try (
         Connection connection = DBConnection.getConnection();
@@ -283,7 +290,8 @@ public List<TransactionTrend> getTransactionTrend() {
         }
 
     } catch (Exception e) {
-        e.printStackTrace();
+       logger.error("Error loading transaction trend", e);
+
     }
 
     return trends;
