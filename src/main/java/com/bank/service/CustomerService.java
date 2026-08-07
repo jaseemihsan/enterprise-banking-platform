@@ -3,6 +3,8 @@ package com.bank.service;
 import com.bank.dao.CustomerDAO;
 import com.bank.model.Customer;
 
+import com.bank.metrics.CustomerMetrics;
+
 import java.util.List;
 
 public class CustomerService {
@@ -15,7 +17,7 @@ public class CustomerService {
 
 
     public List<Customer> getAllCustomers() {
-        return customerDAO.getAllCustomers();
+    return customerDAO.getAllCustomers();
     }
 
     public boolean updateCustomer(Customer customer){

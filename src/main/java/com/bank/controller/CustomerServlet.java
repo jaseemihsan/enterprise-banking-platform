@@ -9,12 +9,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 @WebServlet({"/customers", "/customers/add",  "/customers/edit",
     "/customers/update", "/customers/delete"})
 
 public class CustomerServlet extends HttpServlet {
+    
+   private static final Logger logger =
+        LoggerFactory.getLogger(CustomerServlet.class);
 
     private final CustomerService customerService = new CustomerService();
     private final AuditLogService auditLogService = new AuditLogService();
@@ -37,20 +43,33 @@ protected void doPost(HttpServletRequest request,
 
         boolean saved = customerService.addCustomer(customer);
 
-	if (saved) {
-		
-	auditLogService.log(
-        (String) request.getSession().getAttribute("username"),
-        "CREATE",
-        "Customer",
-        "Created customer: " + customer.getEmail(),
-        request.getRemoteAddr());
+      if (saved) {
 
-            response.sendRedirect(request.getContextPath() + "/customers");
-        } else {
-            response.sendRedirect(request.getContextPath()
+    logger.info(
+            "Customer created. email={}, name={} {}",
+            customer.getEmail(),
+            customer.getFirstName(),
+            customer.getLastName());
+
+    auditLogService.log(
+            (String) request.getSession().getAttribute("username"),
+            "CREATE",
+            "Customer",
+            "Created customer: " + customer.getEmail(),
+            request.getRemoteAddr());
+
+    response.sendRedirect(request.getContextPath() + "/customers");
+
+} else {
+
+    logger.warn(
+            "Customer creation failed. email={}",
+            customer.getEmail());
+
+    response.sendRedirect(
+            request.getContextPath()
                     + "/customers.jsp?error=Unable+to+Add+Customer");
-        }
+}
 
         return;
     }
@@ -72,23 +91,31 @@ protected void doPost(HttpServletRequest request,
 
 	if (updated) {
 
-	auditLogService.log(
-        (String) request.getSession().getAttribute("username"),
-        "UPDATE",
-        "Customer",
-        "Updated customer: " + customer.getEmail(),
-        request.getRemoteAddr());
+    logger.info(
+            "Customer updated. id={}, email={}",
+            customer.getId(),
+            customer.getEmail());
 
-            response.sendRedirect(
-                    request.getContextPath() + "/customers");
+    auditLogService.log(
+            (String) request.getSession().getAttribute("username"),
+            "UPDATE",
+            "Customer",
+            "Updated customer: " + customer.getEmail(),
+            request.getRemoteAddr());
 
-        } else {
+    response.sendRedirect(
+            request.getContextPath() + "/customers");
 
-            response.sendRedirect(
-                    request.getContextPath()
-                            + "/customers?error=UpdateFailed");
+} else {
 
-        }
+    logger.warn(
+            "Customer update failed. id={}",
+            customer.getId());
+
+    response.sendRedirect(
+            request.getContextPath()
+                    + "/customers?error=UpdateFailed");
+}
 
     }
 
@@ -105,6 +132,10 @@ protected void doGet(HttpServletRequest request,
     if ("/customers/edit".equals(servletPath)) {
 
         int id = Integer.parseInt(request.getParameter("id"));
+        
+        logger.info(
+        "Editing customer. customerId={}",
+        id);
 
         Customer customer = customerService.getCustomerById(id);
 
@@ -123,22 +154,30 @@ protected void doGet(HttpServletRequest request,
 
     boolean deleted = customerService.deleteCustomer(id);
 
-       if (deleted) {
+        if (deleted) {
 
-	 auditLogService.log(
-        (String) request.getSession().getAttribute("username"),
-        "DELETE",
-        "Customer",
-        "Deleted customer ID: " + id,
-        request.getRemoteAddr());
+    logger.info(
+            "Customer deleted. customerId={}",
+            id);
 
-	 } else {
+    auditLogService.log(
+            (String) request.getSession().getAttribute("username"),
+            "DELETE",
+            "Customer",
+            "Deleted customer ID: " + id,
+            request.getRemoteAddr());
 
-        request.getSession().setAttribute(
-                "error",
-                "Customer cannot be deleted because they have existing accounts.");
+} else {
 
-    }
+    logger.warn(
+            "Customer deletion blocked. customerId={} has existing accounts",
+            id);
+
+    request.getSession().setAttribute(
+            "error",
+            "Customer cannot be deleted because they have existing accounts.");
+}   
+
          response.sendRedirect(request.getContextPath() + "/customers");
 
          return;
@@ -152,12 +191,15 @@ List<Customer> customers;
 
 if (keyword != null && !keyword.isBlank()) {
 
+    logger.info(
+            "Customer search. keyword={}",
+            keyword);
+
     customers = customerService.searchCustomers(keyword);
 
 } else {
 
     customers = customerService.getAllCustomers();
-
 }
 
 

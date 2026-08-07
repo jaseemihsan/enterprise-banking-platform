@@ -9,8 +9,13 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.math.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AccountDAO {
+
+	private static final Logger logger =
+        LoggerFactory.getLogger(AccountDAO.class);
 
     /*
      * Create Account
@@ -497,6 +502,29 @@ public List<Account> getAccountReport() {
     }
 
     return accounts;
+}
+
+
+public int countAccounts() {
+
+    String sql = "SELECT COUNT(*) FROM accounts";
+
+    try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery()
+    ) {
+
+        if (rs.next()) {
+            return rs.getInt(1);
+        }
+
+    } catch (Exception e) {
+
+        logger.error("Error counting accounts", e);
+    }
+
+    return 0;
 }
 
 }

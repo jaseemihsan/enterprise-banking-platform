@@ -236,4 +236,24 @@ return rows > 0;
     return false;
   }
 
+
+   public int countCustomers() {
+
+    String sql = "SELECT COUNT(*) FROM customers";
+
+    try (Connection connection = DBConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql);
+         ResultSet resultSet = statement.executeQuery()) {
+
+        if (resultSet.next()) {
+            return resultSet.getInt(1);
+        }
+
+    } catch (Exception e) {
+         logger.error("Error counting customers", e);
+    }
+
+    return 0;
+}
+
 }

@@ -2,7 +2,8 @@
 target/
 
 # Logs
-*.log
+logs/*.txt
+logs/*.log
 
 # IDE
 .idea/

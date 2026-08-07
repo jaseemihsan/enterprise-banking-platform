@@ -26,6 +26,7 @@ public class AuthenticationFilter extends HttpFilter {
                 || path.equals("/login")
                 || path.equals("/login.jsp")
                 || path.equals("/403.jsp")
+		|| path.equals("/metrics")
                 || path.startsWith("/assets/")) {
 
             chain.doFilter(request, response);

@@ -8,6 +8,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 
@@ -18,6 +21,9 @@ import java.math.BigDecimal;
         "/accounts/close"
 })
 public class AccountServlet extends HttpServlet {
+
+     private static final Logger logger =
+        LoggerFactory.getLogger(AccountServlet.class);
 
     private final AccountService accountService = new AccountService();
     private final CustomerService customerService = new CustomerService();
@@ -87,17 +93,21 @@ public class AccountServlet extends HttpServlet {
 
         if (keyword != null && !keyword.trim().isEmpty()) {
 
-            request.setAttribute(
-                    "accounts",
-                    accountService.searchAccounts(keyword));
+    logger.info(
+            "Account search performed. keyword={}",
+            keyword);
 
-        } else {
+    request.setAttribute(
+            "accounts",
+            accountService.searchAccounts(keyword));
 
-            request.setAttribute(
-                    "accounts",
-                    accountService.getAllAccounts());
+} else {
 
-        }
+    request.setAttribute(
+            "accounts",
+            accountService.getAllAccounts());
+
+}
 
         request.getRequestDispatcher("/accounts.jsp")
                 .forward(request, response);
@@ -131,17 +141,27 @@ public class AccountServlet extends HttpServlet {
 
         if (saved) {
 
-            response.sendRedirect(
-                    request.getContextPath()
-                            + "/accounts?success=Account+Created");
+    logger.info(
+            "Account created. accountNumber={}, customerId={}, accountType={}",
+            account.getAccountNumber(),
+            account.getCustomerId(),
+            account.getAccountType());
 
-        } else {
+    response.sendRedirect(
+            request.getContextPath()
+                    + "/accounts?success=Account+Created");
 
-            response.sendRedirect(
-                    request.getContextPath()
-                            + "/accounts?error=Unable+to+Create+Account");
+} else {
 
-        }
+    logger.warn(
+            "Account creation failed. customerId={}, accountType={}",
+            account.getCustomerId(),
+            account.getAccountType());
+
+    response.sendRedirect(
+            request.getContextPath()
+                    + "/accounts?error=Unable+to+Create+Account");
+}
 
     }
 
@@ -154,6 +174,10 @@ public class AccountServlet extends HttpServlet {
 
         int id = Integer.parseInt(
                 request.getParameter("id"));
+       
+	logger.info(
+        "Editing account. accountId={}",
+        id);
 
         request.setAttribute(
                 "account",
@@ -187,17 +211,26 @@ public class AccountServlet extends HttpServlet {
 
         if (updated) {
 
-            response.sendRedirect(
-                    request.getContextPath()
-                            + "/accounts?success=Account+Updated");
+    logger.info(
+            "Account updated. accountId={}, status={}, type={}",
+            account.getId(),
+            account.getStatus(),
+            account.getAccountType());
 
-        } else {
+    response.sendRedirect(
+            request.getContextPath()
+                    + "/accounts?success=Account+Updated");
 
-            response.sendRedirect(
-                    request.getContextPath()
-                            + "/accounts?error=Update+Failed");
+} else {
 
-        }
+    logger.warn(
+            "Account update failed. accountId={}",
+            account.getId());
+
+    response.sendRedirect(
+            request.getContextPath()
+                    + "/accounts?error=Update+Failed");
+}
 
     }
 
@@ -212,6 +245,10 @@ public class AccountServlet extends HttpServlet {
                 request.getParameter("id"));
 
         accountService.closeAccount(id);
+
+	logger.info(
+        "Account closed. accountId={}",
+        id);
 
         response.sendRedirect(
                 request.getContextPath()
