@@ -14,6 +14,10 @@ services:
 
     ports:
       - "9404:9404"
+      - "9414:8080"
+
+    volumes:
+      - ./logs/blue:/usr/local/tomcat/logs
 
     networks:
       - banking-network
@@ -33,6 +37,10 @@ services:
 
     ports:
       - "9405:9404"
+      - "9415:8080"
+
+    volumes:
+      - ./logs/green:/usr/local/tomcat/logs
 
     networks:
       - banking-network
@@ -48,6 +56,7 @@ services:
 
     command:
       - '--path.rootfs=/host'
+      - '--collector.textfile.directory=/host/var/lib/node_exporter/textfile_collector'
 
     pid: host
 

@@ -1,0 +1,8 @@
+2026-08-12 06:48:50 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.HikariDataSource - BankingPool - Starting...
+2026-08-12 06:48:51 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.pool.HikariPool - BankingPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@feb1b2f
+2026-08-12 06:48:51 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.HikariDataSource - BankingPool - Start completed.
+2026-08-12 06:48:51 [http-nio-8080-exec-1]  INFO  com.bank.config.DBConnection - HikariCP Connection Pool Initialized
+2026-08-12 07:58:42 [http-nio-8080-exec-3]  INFO  com.bank.dao.AuditLogDAO - Audit log saved: admin - LOGIN
+2026-08-12 07:58:42 [http-nio-8080-exec-3]  INFO  com.bank.controller.LoginServlet - User logged in. username=admin, role=ADMIN, ip=172.19.0.3
+2026-08-12 07:58:42 [http-nio-8080-exec-4]  INFO  c.bank.controller.DashboardServlet - Dashboard accessed. username=admin
+2026-08-12 07:58:50 [http-nio-8080-exec-6]  INFO  com.bank.controller.DepositServlet - Deposit successful. accountId=1, amount=1000, remarks=
