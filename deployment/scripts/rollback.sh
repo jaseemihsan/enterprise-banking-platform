@@ -9,15 +9,33 @@ if [ "$ACTIVE" != "blue" ] && [ "$ACTIVE" != "green" ]; then
     exit 1
 fi
 
+NGINX_CONFIG="deployment/nginx/nginx.conf"
+
+echo "====================================="
 echo "Rolling back to $ACTIVE"
+echo "====================================="
+
+echo "Updating Nginx configuration..."
 
 sed -i "s/server banking-.*/server banking-$ACTIVE:8080;/" \
-deployment/nginx/nginx.conf
+"$NGINX_CONFIG"
+
+echo "Testing Nginx configuration..."
 
 docker exec banking-nginx nginx -t
 
-docker compose up -d --force-recreate --no-deps nginx
+echo "Recreating Nginx..."
+
+docker compose -p banking-app up -d \
+    --force-recreate \
+    --no-deps \
+    nginx
+
+echo "Updating deployment metric..."
 
 ./deployment/scripts/update-active-metric.sh "$ACTIVE"
 
-echo "Rollback completed. Active deployment: $ACTIVE"
+echo "====================================="
+echo "Rollback completed"
+echo "Active deployment: $ACTIVE"
+echo "====================================="
