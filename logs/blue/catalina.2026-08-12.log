@@ -36,3 +36,54 @@
 12-Aug-2026 06:48:42.109 INFO [main] org.apache.catalina.startup.HostConfig.deployWAR Deployment of web application archive [/usr/local/tomcat/webapps/ROOT.war] has finished in [6,465] ms
 12-Aug-2026 06:48:42.132 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
 12-Aug-2026 06:48:42.229 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [6964] milliseconds
+12-Aug-2026 12:37:28.623 SEVERE [prometheus-http-1-1] e1723a08afd7bca35570fd31a7656f59.io.prometheus.metrics.exporter.httpserver.HttpExchangeAdapter.sendErrorResponseWithStackTrace The Prometheus metrics HTTPServer caught an Exception while trying to send the metrics response.
+	java.io.IOException: Broken pipe
+		at java.base/sun.nio.ch.SocketDispatcher.write0(Native Method)
+		at java.base/sun.nio.ch.SocketDispatcher.write(SocketDispatcher.java:65)
+		at java.base/sun.nio.ch.IOUtil.writeFromNativeBuffer(IOUtil.java:137)
+		at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:102)
+		at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:58)
+		at java.base/sun.nio.ch.SocketChannelImpl.write(SocketChannelImpl.java:542)
+		at jdk.httpserver/sun.net.httpserver.Request$WriteStream.write(Request.java:421)
+		at jdk.httpserver/sun.net.httpserver.ChunkedOutputStream.writeChunk(ChunkedOutputStream.java:127)
+		at jdk.httpserver/sun.net.httpserver.ChunkedOutputStream.write(ChunkedOutputStream.java:89)
+		at jdk.httpserver/sun.net.httpserver.PlaceholderOutputStream.write(ExchangeImpl.java:476)
+		at java.base/java.util.zip.GZIPOutputStream.finish(GZIPOutputStream.java:172)
+		at java.base/java.util.zip.DeflaterOutputStream.close(DeflaterOutputStream.java:267)
+		at e1723a08afd7bca35570fd31a7656f59.io.prometheus.metrics.exporter.common.PrometheusScrapeHandler.handleRequest(PrometheusScrapeHandler.java:74)
+		at e1723a08afd7bca35570fd31a7656f59.io.prometheus.metrics.exporter.httpserver.MetricsHandler.handle(MetricsHandler.java:33)
+		at jdk.httpserver/com.sun.net.httpserver.Filter$Chain.doFilter(Filter.java:98)
+		at jdk.httpserver/sun.net.httpserver.AuthFilter.doFilter(AuthFilter.java:82)
+		at jdk.httpserver/com.sun.net.httpserver.Filter$Chain.doFilter(Filter.java:101)
+		at jdk.httpserver/sun.net.httpserver.ServerImpl$Exchange$LinkHandler.handle(ServerImpl.java:923)
+		at jdk.httpserver/com.sun.net.httpserver.Filter$Chain.doFilter(Filter.java:98)
+		at jdk.httpserver/sun.net.httpserver.ServerImpl$Exchange.run(ServerImpl.java:899)
+		at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+		at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+		at java.base/java.lang.Thread.run(Thread.java:1583)
+12-Aug-2026 12:37:58.154 INFO [Thread-4] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+12-Aug-2026 12:37:58.170 INFO [Thread-4] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+12-Aug-2026 12:37:58.218 WARNING [Thread-4] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [ROOT] registered the JDBC driver [com.mysql.cj.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+12-Aug-2026 12:37:58.222 WARNING [Thread-4] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [ROOT] appears to have started a thread named [mysql-cj-abandoned-connection-cleanup] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
+ java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1886)
+ java.base/java.lang.ref.ReferenceQueue.await(ReferenceQueue.java:71)
+ java.base/java.lang.ref.ReferenceQueue.remove0(ReferenceQueue.java:143)
+ java.base/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:218)
+ com.mysql.cj.jdbc.AbandonedConnectionCleanupThread.run(AbandonedConnectionCleanupThread.java:84)
+ java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+ java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+ java.base/java.lang.Thread.run(Thread.java:1583)
+12-Aug-2026 12:37:58.224 WARNING [Thread-4] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [ROOT] appears to have started a thread named [BankingPool:housekeeper] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.base/jdk.internal.misc.Unsafe.park(Native Method)
+ java.base/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
+ java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1797)
+ java.base/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1182)
+ java.base/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:899)
+ java.base/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1070)
+ java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
+ java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+ java.base/java.lang.Thread.run(Thread.java:1583)
+12-Aug-2026 12:37:58.322 INFO [Thread-4] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+12-Aug-2026 12:37:58.352 INFO [Thread-4] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]

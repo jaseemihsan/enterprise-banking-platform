@@ -1,0 +1,13 @@
+2026-08-12 06:48:50 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.HikariDataSource - BankingPool - Starting...
+2026-08-12 06:48:51 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.pool.HikariPool - BankingPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@feb1b2f
+2026-08-12 06:48:51 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.HikariDataSource - BankingPool - Start completed.
+2026-08-12 06:48:51 [http-nio-8080-exec-1]  INFO  com.bank.config.DBConnection - HikariCP Connection Pool Initialized
+2026-08-12 07:58:42 [http-nio-8080-exec-3]  INFO  com.bank.dao.AuditLogDAO - Audit log saved: admin - LOGIN
+2026-08-12 07:58:42 [http-nio-8080-exec-3]  INFO  com.bank.controller.LoginServlet - User logged in. username=admin, role=ADMIN, ip=172.19.0.3
+2026-08-12 07:58:42 [http-nio-8080-exec-4]  INFO  c.bank.controller.DashboardServlet - Dashboard accessed. username=admin
+2026-08-12 07:58:50 [http-nio-8080-exec-6]  INFO  com.bank.controller.DepositServlet - Deposit successful. accountId=1, amount=1000, remarks=
+2026-08-12 08:56:20 [http-nio-8080-exec-5]  WARN  com.zaxxer.hikari.pool.PoolBase - BankingPool - Failed to validate connection com.mysql.cj.jdbc.ConnectionImpl@243b03e7 (No operations allowed after connection closed.). Possibly consider using a shorter maxLifetime value.
+2026-08-12 09:07:16 [BankingPool:housekeeper]  WARN  com.zaxxer.hikari.pool.HikariPool - BankingPool - Thread starvation or clock leap detected (housekeeper delta=57s391ms941µs628ns).
+2026-08-12 11:40:07 [http-nio-8080-exec-7]  WARN  com.zaxxer.hikari.pool.PoolBase - BankingPool - Failed to validate connection com.mysql.cj.jdbc.ConnectionImpl@63964164 (No operations allowed after connection closed.). Possibly consider using a shorter maxLifetime value.
+2026-08-12 11:54:57 [BankingPool:housekeeper]  WARN  com.zaxxer.hikari.pool.HikariPool - BankingPool - Thread starvation or clock leap detected (housekeeper delta=54s448ms632µs563ns).
+2026-08-12 12:37:32 [BankingPool:housekeeper]  WARN  com.zaxxer.hikari.pool.PoolBase - BankingPool - Failed to validate connection com.mysql.cj.jdbc.ConnectionImpl@563884dd (No operations allowed after connection closed.). Possibly consider using a shorter maxLifetime value.

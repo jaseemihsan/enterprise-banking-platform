@@ -9,6 +9,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "banking-app"
+        IMAGE_TAG = "build-${BUILD_NUMBER}"
         ACTIVE = ""
         TARGET = ""
     }
@@ -56,12 +57,7 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-
-                script {
-
-                    def IMAGE_TAG = "build-${env.BUILD_NUMBER}"
-
-                    sh """
+                   sh """
                         docker build \
                         -t ${IMAGE_NAME}:${IMAGE_TAG} \
                         -f deployment/docker/Dockerfile .
@@ -115,8 +111,13 @@ pipeline {
             steps {
 
                 sh """
-                    docker compose build banking-${TARGET}
-                    docker compose up -d banking-${TARGET}
+                    echo "Deploying ${IMAGE_NAME}:${IMAGE_TAG} to banking-${TARGET}"
+
+                    BANKING_IMAGE=${IMAGE_NAME}:${IMAGE_TAG} \
+                    docker compose up -d \
+                    --no-deps \
+                    --force-recreate \
+                    banking-${TARGET}
                 """
 
             }

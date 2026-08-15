@@ -1,9 +1,7 @@
 services:
 
   banking-blue:
-    build:
-      context: .
-      dockerfile: deployment/docker/Dockerfile
+    image: ${BANKING_IMAGE:-banking-app:latest}
 
     container_name: banking-blue
 
@@ -24,9 +22,7 @@ services:
 
 
   banking-green:
-    build:
-      context: .
-      dockerfile: deployment/docker/Dockerfile
+    image: ${BANKING_IMAGE:-banking-app:latest}
 
     container_name: banking-green
 

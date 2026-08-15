@@ -1,28 +1,4 @@
-2026-08-12 06:48:42 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.HikariDataSource - BankingPool - Starting...
-2026-08-12 06:48:43 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.pool.HikariPool - BankingPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@3d07bb7f
-2026-08-12 06:48:43 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.HikariDataSource - BankingPool - Start completed.
-2026-08-12 06:48:43 [http-nio-8080-exec-1]  INFO  com.bank.config.DBConnection - HikariCP Connection Pool Initialized
-2026-08-12 06:54:14 [http-nio-8080-exec-2]  INFO  com.bank.dao.AuditLogDAO - Audit log saved: admin - LOGIN
-2026-08-12 06:54:14 [http-nio-8080-exec-2]  INFO  com.bank.controller.LoginServlet - User logged in. username=admin, role=ADMIN, ip=172.19.0.3
-2026-08-12 06:54:14 [http-nio-8080-exec-3]  INFO  c.bank.controller.DashboardServlet - Dashboard accessed. username=admin
-2026-08-12 07:22:35 [http-nio-8080-exec-1]  INFO  com.bank.controller.DepositServlet - Deposit successful. accountId=1, amount=12000, remarks=
-2026-08-12 07:22:41 [http-nio-8080-exec-4]  INFO  com.bank.controller.DepositServlet - Deposit successful. accountId=4, amount=150000, remarks=
-2026-08-12 07:22:48 [http-nio-8080-exec-6]  INFO  com.bank.controller.DepositServlet - Deposit successful. accountId=7, amount=25420, remarks=
-2026-08-12 07:22:56 [http-nio-8080-exec-10]  INFO  com.bank.controller.WithdrawServlet - Withdrawal successful. accountId=2, amount=100000, remarks=
-2026-08-12 07:23:01 [http-nio-8080-exec-2]  INFO  com.bank.controller.WithdrawServlet - Withdrawal successful. accountId=4, amount=25000, remarks=
-2026-08-12 07:23:10 [http-nio-8080-exec-4]  INFO  com.bank.controller.WithdrawServlet - Withdrawal successful. accountId=4, amount=282220, remarks=
-2026-08-12 07:23:32 [http-nio-8080-exec-7]  INFO  com.bank.controller.TransferServlet - Transfer completed. fromAccountId=6, toAccountId=5, amount=158000, remarks=
-2026-08-12 07:23:48 [http-nio-8080-exec-2]  INFO  com.bank.controller.TransferServlet - Transfer completed. fromAccountId=5, toAccountId=7, amount=15800, remarks=
-2026-08-12 07:24:32 [http-nio-8080-exec-3]  WARN  com.bank.controller.LoginServlet - Failed login. username=admin, ip=172.19.0.3
-2026-08-12 07:24:37 [http-nio-8080-exec-4]  INFO  com.bank.dao.AuditLogDAO - Audit log saved: admin - LOGIN
-2026-08-12 07:24:37 [http-nio-8080-exec-4]  INFO  com.bank.controller.LoginServlet - User logged in. username=admin, role=ADMIN, ip=172.19.0.3
-2026-08-12 07:24:37 [http-nio-8080-exec-5]  INFO  c.bank.controller.DashboardServlet - Dashboard accessed. username=admin
-2026-08-12 07:25:59 [http-nio-8080-exec-5]  WARN  com.bank.controller.LoginServlet - Failed login. username=admin, ip=172.19.0.3
-2026-08-12 07:26:02 [http-nio-8080-exec-6]  WARN  com.bank.controller.LoginServlet - Failed login. username=fdvmsdk, ip=172.19.0.3
-2026-08-12 07:39:37 [http-nio-8080-exec-2]  INFO  com.bank.dao.AuditLogDAO - Audit log saved: admin - LOGIN
-2026-08-12 07:39:37 [http-nio-8080-exec-2]  INFO  com.bank.controller.LoginServlet - User logged in. username=admin, role=ADMIN, ip=172.19.0.3
-2026-08-12 07:39:37 [http-nio-8080-exec-3]  INFO  c.bank.controller.DashboardServlet - Dashboard accessed. username=admin
-2026-08-12 08:06:07 [http-nio-8080-exec-3]  INFO  com.bank.dao.AuditLogDAO - Audit log saved: admin - LOGIN
-2026-08-12 08:06:07 [http-nio-8080-exec-3]  INFO  com.bank.controller.LoginServlet - User logged in. username=admin, role=ADMIN, ip=172.19.0.3
-2026-08-12 08:06:07 [http-nio-8080-exec-4]  INFO  c.bank.controller.DashboardServlet - Dashboard accessed. username=admin
-2026-08-12 08:06:16 [http-nio-8080-exec-9]  INFO  com.bank.controller.WithdrawServlet - Withdrawal successful. accountId=1, amount=1000, remarks=
+2026-08-15 05:56:56 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.HikariDataSource - BankingPool - Starting...
+2026-08-15 05:56:57 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.pool.HikariPool - BankingPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@5aff153
+2026-08-15 05:56:57 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.HikariDataSource - BankingPool - Start completed.
+2026-08-15 05:56:57 [http-nio-8080-exec-1]  INFO  com.bank.config.DBConnection - HikariCP Connection Pool Initialized
