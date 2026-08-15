@@ -57,20 +57,20 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                   sh """
-                        docker build \
-                        -t ${IMAGE_NAME}:${IMAGE_TAG} \
-                        -f deployment/docker/Dockerfile .
-                    """
+                sh """
+                    echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}"
+
+                    docker build \
+                    -t ${IMAGE_NAME}:${IMAGE_TAG} \
+                    -f deployment/docker/Dockerfile .
 
                     echo "Built image ${IMAGE_NAME}:${IMAGE_TAG}"
-                }
+                """
             }
         }
 
         stage('Detect Active') {
             steps {
-
                 script {
 
                     ACTIVE = sh(
@@ -78,38 +78,41 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
+                    echo "====================================="
                     echo "Current Active Environment : ${ACTIVE}"
-
+                    echo "====================================="
                 }
             }
         }
 
         stage('Choose Target') {
             steps {
-
                 script {
 
                     if (ACTIVE == "blue") {
 
                         TARGET = "green"
 
-                    } else {
+                    } else if (ACTIVE == "green") {
 
                         TARGET = "blue"
 
+                    } else {
+
+                        error("Unable to determine active environment: ${ACTIVE}")
+
                     }
 
+                    echo "====================================="
                     echo "Deploying To : ${TARGET}"
-
+                    echo "Docker Image : ${IMAGE_NAME}:${IMAGE_TAG}"
+                    echo "====================================="
                 }
-
             }
         }
 
         stage('Deploy Target') {
-
             steps {
-
                 sh """
                     echo "Deploying ${IMAGE_NAME}:${IMAGE_TAG} to banking-${TARGET}"
 
@@ -119,68 +122,62 @@ pipeline {
                     --force-recreate \
                     banking-${TARGET}
                 """
-
             }
-
         }
 
         stage('Health Check') {
-
             steps {
-
                 sh """
+                    echo "Running health check for ${TARGET}"
+
                     chmod +x deployment/scripts/health-check.sh
+
                     ./deployment/scripts/health-check.sh ${TARGET}
                 """
-
             }
-
         }
 
         stage('Switch Traffic') {
-
             steps {
-
                 sh """
+                    echo "Switching production traffic to ${TARGET}"
+
                     chmod +x deployment/scripts/switch-traffic.sh
+
                     ./deployment/scripts/switch-traffic.sh ${TARGET}
                 """
-
             }
-
         }
 
         stage('Smoke Test') {
-
             steps {
-
                 sh '''
                     echo "Running Smoke Test..."
+
                     curl -f http://localhost/
+
+                    echo "Smoke Test Passed"
                 '''
-
             }
-
         }
-
     }
 
     post {
 
         success {
-
             echo "====================================="
             echo "Blue/Green Deployment Successful"
             echo "Live Environment : ${TARGET}"
+            echo "Docker Image     : ${IMAGE_NAME}:${IMAGE_TAG}"
             echo "====================================="
-
         }
 
         failure {
-
             script {
 
+                echo "====================================="
                 echo "Pipeline Failed"
+                echo "====================================="
 
                 if (ACTIVE?.trim()) {
 
@@ -188,6 +185,7 @@ pipeline {
 
                     sh """
                         chmod +x deployment/scripts/rollback.sh
+
                         ./deployment/scripts/rollback.sh ${ACTIVE}
                     """
 
@@ -196,15 +194,11 @@ pipeline {
                     echo "Deployment never started. Rollback skipped."
 
                 }
-
             }
-
         }
 
         always {
-
             cleanWs()
-
         }
-
+    }
 }
