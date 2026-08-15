@@ -15,9 +15,18 @@ fi
 
 echo "Switching traffic to $TARGET"
 
+echo "Testing Nginx configuration..."
+
 docker exec banking-nginx nginx -t
 
-docker compose up -d --force-recreate --no-deps nginx
+echo "Recreating Nginx..."
+
+docker compose -p banking-app up -d \
+    --force-recreate \
+    --no-deps \
+    nginx
+
+echo "Updating deployment metric..."
 
 ./deployment/scripts/update-active-metric.sh "$TARGET"
 
