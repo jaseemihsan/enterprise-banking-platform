@@ -1,3 +1,6 @@
+def activeEnvironment = ''
+def targetEnvironment = ''
+
 pipeline {
 
     agent any
@@ -10,8 +13,6 @@ pipeline {
     environment {
         IMAGE_NAME = "banking-app"
         IMAGE_TAG  = "build-${BUILD_NUMBER}"
-        ACTIVE     = ""
-        TARGET     = ""
     }
 
     stages {
@@ -74,56 +75,51 @@ pipeline {
 
         stage('Detect Active') {
             steps {
-
                 script {
 
-                    def detectedActive = sh(
+                    activeEnvironment = sh(
                         script: './deployment/scripts/detect-active.sh',
                         returnStdout: true
                     ).trim()
 
-                    if (detectedActive != 'blue' &&
-                        detectedActive != 'green') {
+                    echo "====================================="
+                    echo "Current Active Environment : ${activeEnvironment}"
+                    echo "====================================="
+
+                    if (activeEnvironment != 'blue' &&
+                        activeEnvironment != 'green') {
 
                         error(
-                            "Unable to determine active environment. " +
-                            "detect-active.sh returned: '${detectedActive}'"
+                            "Invalid active environment returned: '${activeEnvironment}'"
                         )
                     }
-
-                    env.ACTIVE = detectedActive
-
-                    echo "====================================="
-                    echo "Current Active Environment : ${env.ACTIVE}"
-                    echo "====================================="
                 }
             }
         }
 
         stage('Choose Target') {
             steps {
-
                 script {
 
-                    if (env.ACTIVE == 'blue') {
+                    if (activeEnvironment == 'blue') {
 
-                        env.TARGET = 'green'
+                        targetEnvironment = 'green'
 
-                    } else if (env.ACTIVE == 'green') {
+                    } else if (activeEnvironment == 'green') {
 
-                        env.TARGET = 'blue'
+                        targetEnvironment = 'blue'
 
                     } else {
 
                         error(
-                            "Invalid active environment: ${env.ACTIVE}"
+                            "Invalid active environment: ${activeEnvironment}"
                         )
                     }
 
                     echo "====================================="
-                    echo "Active Environment : ${env.ACTIVE}"
-                    echo "Deployment Target  : ${env.TARGET}"
-                    echo "Image              : ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
+                    echo "Active Environment : ${activeEnvironment}"
+                    echo "Deployment Target  : ${targetEnvironment}"
+                    echo "Image              : ${IMAGE_NAME}:${IMAGE_TAG}"
                     echo "====================================="
                 }
             }
@@ -133,18 +129,21 @@ pipeline {
             steps {
 
                 sh """
-                    echo "Deploying ${IMAGE_NAME}:${IMAGE_TAG} to banking-${TARGET}"
+                    echo "====================================="
+                    echo "Deploying ${IMAGE_NAME}:${IMAGE_TAG}"
+                    echo "Target: banking-${targetEnvironment}"
+                    echo "====================================="
 
-                    echo "Removing previous banking-${TARGET} container..."
+                    echo "Removing previous banking-${targetEnvironment} container..."
 
-                    docker rm -f banking-${TARGET} || true
+                    docker rm -f banking-${targetEnvironment} || true
 
-                    echo "Starting banking-${TARGET}..."
+                    echo "Starting banking-${targetEnvironment}..."
 
                     BANKING_IMAGE=${IMAGE_NAME}:${IMAGE_TAG} \
                     docker compose -p banking-app up -d \
                       --no-deps \
-                      banking-${TARGET}
+                      banking-${targetEnvironment}
 
                     echo "Deployment container started"
                 """
@@ -155,11 +154,13 @@ pipeline {
             steps {
 
                 sh """
-                    echo "Running health check for ${TARGET}"
+                    echo "====================================="
+                    echo "Running health check for ${targetEnvironment}"
+                    echo "====================================="
 
                     chmod +x deployment/scripts/health-check.sh
 
-                    ./deployment/scripts/health-check.sh ${TARGET}
+                    ./deployment/scripts/health-check.sh ${targetEnvironment}
                 """
             }
         }
@@ -168,11 +169,13 @@ pipeline {
             steps {
 
                 sh """
-                    echo "Switching traffic to ${TARGET}"
+                    echo "====================================="
+                    echo "Switching traffic to ${targetEnvironment}"
+                    echo "====================================="
 
                     chmod +x deployment/scripts/switch-traffic.sh
 
-                    ./deployment/scripts/switch-traffic.sh ${TARGET}
+                    ./deployment/scripts/switch-traffic.sh ${targetEnvironment}
                 """
             }
         }
@@ -181,7 +184,9 @@ pipeline {
             steps {
 
                 sh '''
-                    echo "Running Smoke Test..."
+                    echo "====================================="
+                    echo "Running Smoke Test"
+                    echo "====================================="
 
                     curl -f http://localhost/
 
@@ -197,11 +202,11 @@ pipeline {
         success {
 
             echo "====================================="
-            echo "Blue/Green Deployment Successful"
+            echo "BLUE/GREEN DEPLOYMENT SUCCESSFUL"
             echo "====================================="
-            echo "Previous Environment : ${env.ACTIVE}"
-            echo "Live Environment     : ${env.TARGET}"
-            echo "Image                : ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
+            echo "Previous Environment : ${activeEnvironment}"
+            echo "Live Environment     : ${targetEnvironment}"
+            echo "Image                : ${IMAGE_NAME}:${IMAGE_TAG}"
             echo "====================================="
         }
 
@@ -210,14 +215,13 @@ pipeline {
             script {
 
                 echo "====================================="
-                echo "Pipeline Failed"
+                echo "PIPELINE FAILED"
                 echo "====================================="
 
-                if (env.ACTIVE?.trim() &&
-                    (env.ACTIVE == 'blue' ||
-                     env.ACTIVE == 'green')) {
+                if (activeEnvironment == 'blue' ||
+                    activeEnvironment == 'green') {
 
-                    echo "Rolling back to ${env.ACTIVE}"
+                    echo "Rolling back to ${activeEnvironment}"
 
                     if (fileExists(
                         'deployment/scripts/rollback.sh'
@@ -227,7 +231,7 @@ pipeline {
                             chmod +x deployment/scripts/rollback.sh
 
                             ./deployment/scripts/rollback.sh \
-                                ${env.ACTIVE}
+                                ${activeEnvironment}
                         """
 
                     } else {
