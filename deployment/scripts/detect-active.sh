@@ -2,13 +2,22 @@
 
 set -e
 
-NGINX_CONFIG="deployment/nginx/nginx.conf"
+ACTIVE=$(docker exec banking-nginx \
+    nginx -T 2>/dev/null \
+    | grep -E 'server banking-(blue|green):8080;' \
+    | head -1)
 
-if grep -q "server banking-blue:8080" "$NGINX_CONFIG"; then
+if echo "$ACTIVE" | grep -q "banking-blue:8080"; then
+
     echo "blue"
-elif grep -q "server banking-green:8080" "$NGINX_CONFIG"; then
+
+elif echo "$ACTIVE" | grep -q "banking-green:8080"; then
+
     echo "green"
+
 else
-    echo "unknown"
+
+    echo "Unable to determine active environment" >&2
     exit 1
+
 fi
