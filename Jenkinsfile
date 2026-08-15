@@ -9,9 +9,9 @@ pipeline {
 
     environment {
         IMAGE_NAME = "banking-app"
-        IMAGE_TAG = "build-${BUILD_NUMBER}"
-        ACTIVE = ""
-        TARGET = ""
+        IMAGE_TAG  = "build-${BUILD_NUMBER}"
+        ACTIVE     = ""
+        TARGET     = ""
     }
 
     stages {
@@ -36,7 +36,9 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
+
                 withSonarQubeEnv('SonarQube') {
+
                     withCredentials([
                         string(
                             credentialsId: 'sonarqube-token',
@@ -46,9 +48,9 @@ pipeline {
 
                         sh '''
                             mvn sonar:sonar \
-                            -Dsonar.projectKey=enterprise-banking-platform \
-                            -Dsonar.projectName=EnterpriseBanking \
-                            -Dsonar.token=$SONAR_TOKEN
+                              -Dsonar.projectKey=enterprise-banking-platform \
+                              -Dsonar.projectName=EnterpriseBanking \
+                              -Dsonar.token=$SONAR_TOKEN
                         '''
                     }
                 }
@@ -57,26 +59,39 @@ pipeline {
 
         stage('Docker Build') {
             steps {
+
+                echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}"
+
                 sh """
-                    echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}"
-
                     docker build \
-                    -t ${IMAGE_NAME}:${IMAGE_TAG} \
-                    -f deployment/docker/Dockerfile .
-
-                    echo "Built image ${IMAGE_NAME}:${IMAGE_TAG}"
+                      -t ${IMAGE_NAME}:${IMAGE_TAG} \
+                      -f deployment/docker/Dockerfile .
                 """
+
+                echo "Built image ${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
 
         stage('Detect Active') {
             steps {
+
                 script {
 
-                   env. ACTIVE = sh(
-                        script: "./deployment/scripts/detect-active.sh",
+                    def detectedActive = sh(
+                        script: './deployment/scripts/detect-active.sh',
                         returnStdout: true
                     ).trim()
+
+                    if (detectedActive != 'blue' &&
+                        detectedActive != 'green') {
+
+                        error(
+                            "Unable to determine active environment. " +
+                            "detect-active.sh returned: '${detectedActive}'"
+                        )
+                    }
+
+                    env.ACTIVE = detectedActive
 
                     echo "====================================="
                     echo "Current Active Environment : ${env.ACTIVE}"
@@ -87,25 +102,28 @@ pipeline {
 
         stage('Choose Target') {
             steps {
+
                 script {
 
-                    if (env.ACTIVE == "blue") {
+                    if (env.ACTIVE == 'blue') {
 
-                        env.TARGET = "green"
+                        env.TARGET = 'green'
 
-                    } else if (env.ACTIVE == "green") {
+                    } else if (env.ACTIVE == 'green') {
 
-                        env.TARGET = "blue"
+                        env.TARGET = 'blue'
 
                     } else {
 
-                        error("Unable to determine active environment: ${ACTIVE}")
-
+                        error(
+                            "Invalid active environment: ${env.ACTIVE}"
+                        )
                     }
 
                     echo "====================================="
-                    echo "Deploying To : ${TARGET}"
-                    echo "Docker Image : ${IMAGE_NAME}:${IMAGE_TAG}"
+                    echo "Active Environment : ${env.ACTIVE}"
+                    echo "Deployment Target  : ${env.TARGET}"
+                    echo "Image              : ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
                     echo "====================================="
                 }
             }
@@ -113,22 +131,20 @@ pipeline {
 
         stage('Deploy Target') {
             steps {
-                sh """
-                    echo "====================================="
-                    echo "Deploying ${IMAGE_NAME}:${IMAGE_TAG}"
-                    echo "Target : banking-${TARGET}"
-                    echo "====================================="
 
-                    echo "Removing previous ${TARGET} container..."
+                sh """
+                    echo "Deploying ${IMAGE_NAME}:${IMAGE_TAG} to banking-${TARGET}"
+
+                    echo "Removing previous banking-${TARGET} container..."
 
                     docker rm -f banking-${TARGET} || true
 
-                    echo "Starting ${TARGET} with image ${IMAGE_NAME}:${IMAGE_TAG}"
+                    echo "Starting banking-${TARGET}..."
 
                     BANKING_IMAGE=${IMAGE_NAME}:${IMAGE_TAG} \
                     docker compose -p banking-app up -d \
-                    --no-deps \
-                    banking-${TARGET}
+                      --no-deps \
+                      banking-${TARGET}
 
                     echo "Deployment container started"
                 """
@@ -137,6 +153,7 @@ pipeline {
 
         stage('Health Check') {
             steps {
+
                 sh """
                     echo "Running health check for ${TARGET}"
 
@@ -149,8 +166,9 @@ pipeline {
 
         stage('Switch Traffic') {
             steps {
+
                 sh """
-                    echo "Switching production traffic to ${TARGET}"
+                    echo "Switching traffic to ${TARGET}"
 
                     chmod +x deployment/scripts/switch-traffic.sh
 
@@ -161,12 +179,14 @@ pipeline {
 
         stage('Smoke Test') {
             steps {
+
                 sh '''
                     echo "Running Smoke Test..."
 
                     curl -f http://localhost/
 
-                    echo "Smoke Test Passed"
+                    echo ""
+                    echo "Smoke Test PASSED"
                 '''
             }
         }
@@ -175,37 +195,59 @@ pipeline {
     post {
 
         success {
+
             echo "====================================="
             echo "Blue/Green Deployment Successful"
-            echo "Live Environment : ${TARGET}"
-            echo "Docker Image     : ${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "====================================="
+            echo "Previous Environment : ${env.ACTIVE}"
+            echo "Live Environment     : ${env.TARGET}"
+            echo "Image                : ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
             echo "====================================="
         }
 
         failure {
+
             script {
 
                 echo "====================================="
                 echo "Pipeline Failed"
                 echo "====================================="
 
-                if (env.ACTIVE?.trim()) {
+                if (env.ACTIVE?.trim() &&
+                    (env.ACTIVE == 'blue' ||
+                     env.ACTIVE == 'green')) {
 
                     echo "Rolling back to ${env.ACTIVE}"
 
-                    sh """
-                        chmod +x deployment/scripts/rollback.sh
+                    if (fileExists(
+                        'deployment/scripts/rollback.sh'
+                    )) {
 
-                        ./deployment/scripts/rollback.sh ${env.ACTIVE}
-                    """
+                        sh """
+                            chmod +x deployment/scripts/rollback.sh
+
+                            ./deployment/scripts/rollback.sh \
+                                ${env.ACTIVE}
+                        """
+
+                    } else {
+
+                        echo "rollback.sh not found."
+                        echo "Rollback skipped."
+                    }
 
                 } else {
 
-                    echo "Deployment never started. Rollback skipped."
-
+                    echo "Active environment is unknown."
+                    echo "Rollback skipped."
                 }
             }
         }
 
+        always {
+
+            echo "Pipeline completed."
+
+        }
     }
 }
