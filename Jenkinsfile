@@ -114,13 +114,23 @@ pipeline {
         stage('Deploy Target') {
             steps {
                 sh """
-                    echo "Deploying ${IMAGE_NAME}:${IMAGE_TAG} to banking-${TARGET}"
+                    echo "====================================="
+                    echo "Deploying ${IMAGE_NAME}:${IMAGE_TAG}"
+                    echo "Target : banking-${TARGET}"
+                    echo "====================================="
+
+                    echo "Removing previous ${TARGET} container..."
+
+                    docker rm -f banking-${TARGET} || true
+
+                    echo "Starting ${TARGET} with image ${IMAGE_NAME}:${IMAGE_TAG}"
 
                     BANKING_IMAGE=${IMAGE_NAME}:${IMAGE_TAG} \
                     docker compose up -d \
                     --no-deps \
-                    --force-recreate \
                     banking-${TARGET}
+
+                    echo "Deployment container started"
                 """
             }
         }
