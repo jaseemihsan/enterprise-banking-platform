@@ -79,7 +79,7 @@ pipeline {
                     ).trim()
 
                     echo "====================================="
-                    echo "Current Active Environment : ${ACTIVE}"
+                    echo "Current Active Environment : ${env.ACTIVE}"
                     echo "====================================="
                 }
             }
@@ -189,14 +189,14 @@ pipeline {
                 echo "Pipeline Failed"
                 echo "====================================="
 
-                if (ACTIVE?.trim()) {
+                if (env.ACTIVE?.trim()) {
 
-                    echo "Rolling back to ${ACTIVE}"
+                    echo "Rolling back to ${env.ACTIVE}"
 
                     sh """
                         chmod +x deployment/scripts/rollback.sh
 
-                        ./deployment/scripts/rollback.sh ${ACTIVE}
+                        ./deployment/scripts/rollback.sh ${env.ACTIVE}
                     """
 
                 } else {
