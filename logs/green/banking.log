@@ -1,4 +1,0 @@
-2026-08-15 05:56:56 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.HikariDataSource - BankingPool - Starting...
-2026-08-15 05:56:57 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.pool.HikariPool - BankingPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@5aff153
-2026-08-15 05:56:57 [http-nio-8080-exec-1]  INFO  com.zaxxer.hikari.HikariDataSource - BankingPool - Start completed.
-2026-08-15 05:56:57 [http-nio-8080-exec-1]  INFO  com.bank.config.DBConnection - HikariCP Connection Pool Initialized
