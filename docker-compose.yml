@@ -115,4 +115,5 @@ services:
 networks:
 
   banking-network:
+    name: banking-app_banking-network
     driver: bridge

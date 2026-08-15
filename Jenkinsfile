@@ -73,7 +73,7 @@ pipeline {
             steps {
                 script {
 
-                    ACTIVE = sh(
+                   env. ACTIVE = sh(
                         script: "./deployment/scripts/detect-active.sh",
                         returnStdout: true
                     ).trim()
@@ -89,13 +89,13 @@ pipeline {
             steps {
                 script {
 
-                    if (ACTIVE == "blue") {
+                    if (env.ACTIVE == "blue") {
 
-                        TARGET = "green"
+                        env.TARGET = "green"
 
-                    } else if (ACTIVE == "green") {
+                    } else if (env.ACTIVE == "green") {
 
-                        TARGET = "blue"
+                        env.TARGET = "blue"
 
                     } else {
 
@@ -126,7 +126,7 @@ pipeline {
                     echo "Starting ${TARGET} with image ${IMAGE_NAME}:${IMAGE_TAG}"
 
                     BANKING_IMAGE=${IMAGE_NAME}:${IMAGE_TAG} \
-                    docker compose up -d \
+                    docker compose -p banking-app up -d \
                     --no-deps \
                     banking-${TARGET}
 
@@ -207,8 +207,5 @@ pipeline {
             }
         }
 
-        always {
-            cleanWs()
-        }
     }
 }
