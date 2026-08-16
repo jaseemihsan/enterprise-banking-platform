@@ -24,3 +24,7 @@ monitoring/grafana/data/
 # OS Files
 .DS_Store
 Thumbs.db
+
+# vim
+*.swp
+*.swo
