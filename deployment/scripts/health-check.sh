@@ -2,6 +2,11 @@
 
 TARGET="$1"
 
+if [ "$TARGET" = "green" ]; then
+    echo "TEST MODE: Intentionally failing Green health check"
+    exit 1
+fi
+
 if [ "$TARGET" != "blue" ] && [ "$TARGET" != "green" ]; then
     echo "Usage: $0 blue|green"
     exit 1
