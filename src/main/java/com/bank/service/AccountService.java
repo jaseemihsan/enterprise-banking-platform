@@ -7,7 +7,21 @@ import java.util.List;
 
 public class AccountService {
 
-    private final AccountDAO accountDAO = new AccountDAO();
+        private final AccountDAO accountDAO;
+
+    /*
+     * Default constructor used by the application.
+     */
+    public AccountService() {
+        this.accountDAO = new AccountDAO();
+    }
+
+    /*
+     * Constructor used for unit testing / dependency injection.
+     */
+    AccountService(AccountDAO accountDAO) {
+        this.accountDAO = accountDAO;
+    }
 
     /*
      * Create Account
