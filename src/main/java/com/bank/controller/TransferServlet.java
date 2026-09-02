@@ -21,10 +21,19 @@ public class TransferServlet extends HttpServlet {
    private static final Logger logger =
         LoggerFactory.getLogger(TransferServlet.class);
 
-    private final AccountService accountService = new AccountService();
-       private final TransferService transferService =
-            new TransferService();
+private final AccountService accountService;
+private final TransferService transferService;
 
+public TransferServlet() {
+    this.accountService = new AccountService();
+    this.transferService = new TransferService();
+}
+
+TransferServlet(AccountService accountService,
+                TransferService transferService) {
+    this.accountService = accountService;
+    this.transferService = transferService;
+}
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)

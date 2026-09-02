@@ -1,6 +1,7 @@
 package com.bank.service;
 
-import com.bank.config.DBConnection;
+import com.bank.config.ConnectionProvider;
+import com.bank.config.DBConnectionProvider;
 import com.bank.dao.AccountDAO;
 import com.bank.dao.TransactionDAO;
 import com.bank.model.Account;
@@ -13,39 +14,73 @@ import java.sql.Connection;
 
 public class WithdrawService {
 
-    private final AccountDAO accountDAO = new AccountDAO();
-    private final TransactionDAO transactionDAO = new TransactionDAO();
+    private final AccountDAO accountDAO;
+    private final TransactionDAO transactionDAO;
+    private final ConnectionProvider connectionProvider;
 
-    public boolean withdraw(int accountId,
-                            BigDecimal amount,
-                            String remarks) {
+    /*
+     * Default constructor used by the application.
+     */
+    public WithdrawService() {
+        this.accountDAO = new AccountDAO();
+        this.transactionDAO = new TransactionDAO();
+        this.connectionProvider = new DBConnectionProvider();
+    }
+
+    /*
+     * Constructor used by unit tests.
+     */
+    WithdrawService(
+            AccountDAO accountDAO,
+            TransactionDAO transactionDAO,
+            ConnectionProvider connectionProvider) {
+
+        this.accountDAO = accountDAO;
+        this.transactionDAO = transactionDAO;
+        this.connectionProvider = connectionProvider;
+    }
+
+    public boolean withdraw(
+            int accountId,
+            BigDecimal amount,
+            String remarks) {
 
         Connection connection = null;
 
         try {
 
-            connection = DBConnection.getConnection();
+            connection = connectionProvider.getConnection();
+
             connection.setAutoCommit(false);
 
             Account account =
-                    accountDAO.getAccountById(connection, accountId);
+                    accountDAO.getAccountById(
+                            connection,
+                            accountId);
 
             if (account == null) {
+
                 connection.rollback();
+
                 return false;
             }
 
             if (!"ACTIVE".equalsIgnoreCase(account.getStatus())) {
+
                 connection.rollback();
+
                 return false;
             }
 
             if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+
                 connection.rollback();
+
                 return false;
             }
 
-            BigDecimal balanceBefore = account.getBalance();
+            BigDecimal balanceBefore =
+                    account.getBalance();
 
             /*
              * Check Balance
@@ -55,7 +90,6 @@ public class WithdrawService {
                 connection.rollback();
 
                 return false;
-
             }
 
             BigDecimal balanceAfter =
@@ -72,10 +106,10 @@ public class WithdrawService {
                 connection.rollback();
 
                 return false;
-
             }
 
-            Transaction transaction = new Transaction();
+            Transaction transaction =
+                    new Transaction();
 
             transaction.setAccountId(accountId);
 
@@ -84,9 +118,11 @@ public class WithdrawService {
 
             transaction.setAmount(amount);
 
-            transaction.setBalanceBefore(balanceBefore);
+            transaction.setBalanceBefore(
+                    balanceBefore);
 
-            transaction.setBalanceAfter(balanceAfter);
+            transaction.setBalanceAfter(
+                    balanceAfter);
 
             transaction.setReferenceNo(
                     ReferenceGenerator.generateReference());
@@ -103,7 +139,6 @@ public class WithdrawService {
                 connection.rollback();
 
                 return false;
-
             }
 
             connection.commit();
@@ -117,9 +152,7 @@ public class WithdrawService {
             try {
 
                 if (connection != null) {
-
                     connection.rollback();
-
                 }
 
             } catch (Exception ignored) {
@@ -132,18 +165,13 @@ public class WithdrawService {
                 if (connection != null) {
 
                     connection.setAutoCommit(true);
-
                     connection.close();
-
                 }
 
             } catch (Exception ignored) {
             }
-
         }
 
         return false;
-
     }
-
 }

@@ -21,8 +21,15 @@ import java.util.List;
 })
 public class UserServlet extends HttpServlet {
 
-    private final UserService userService = new UserService();
+private final UserService userService;
 
+public UserServlet() {
+    this.userService = new UserService();
+}
+
+UserServlet(UserService userService) {
+    this.userService = userService;
+}
      @Override
 protected void doGet(HttpServletRequest request,
                      HttpServletResponse response)

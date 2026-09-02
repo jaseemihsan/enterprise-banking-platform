@@ -7,8 +7,21 @@ import java.util.List;
 
 public class StatementService {
 
-    private final TransactionDAO transactionDAO =
-            new TransactionDAO();
+    private final TransactionDAO transactionDAO;
+
+    /*
+     * Default constructor used by the application.
+     */
+    public StatementService() {
+        this.transactionDAO = new TransactionDAO();
+    }
+
+    /*
+     * Constructor used for unit testing.
+     */
+    StatementService(TransactionDAO transactionDAO) {
+        this.transactionDAO = transactionDAO;
+    }
 
     public List<Transaction> getStatement(int accountId) {
 

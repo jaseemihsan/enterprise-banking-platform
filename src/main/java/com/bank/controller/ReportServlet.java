@@ -219,9 +219,6 @@ public class ReportServlet extends HttpServlet {
                             "Content-Disposition",
                             "attachment; filename=customer-report.pdf");
 
-                    logger.info(
-                            "User {} generated Customer PDF Report",
-                            username);
 
                  logger.info(
         "User {} generated Customer PDF Report",

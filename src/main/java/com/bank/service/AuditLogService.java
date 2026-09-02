@@ -5,7 +5,15 @@ import com.bank.model.AuditLog;
 
 public class AuditLogService {
 
-    private final AuditLogDAO auditLogDAO = new AuditLogDAO();
+private final AuditLogDAO auditLogDAO;
+
+public AuditLogService() {
+    this.auditLogDAO = new AuditLogDAO();
+}
+
+AuditLogService(AuditLogDAO auditLogDAO) {
+    this.auditLogDAO = auditLogDAO;
+}
 
     public void log(String username,
                     String action,

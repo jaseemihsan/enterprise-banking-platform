@@ -12,12 +12,19 @@ import java.io.IOException;
 @WebServlet("/statement")
 public class StatementServlet extends HttpServlet {
 
-    private final AccountService accountService =
-            new AccountService();
+private final AccountService accountService;
+private final StatementService statementService;
 
-    private final StatementService statementService =
-            new StatementService();
+public StatementServlet() {
+    this.accountService = new AccountService();
+    this.statementService = new StatementService();
+}
 
+StatementServlet(AccountService accountService,
+                 StatementService statementService) {
+    this.accountService = accountService;
+    this.statementService = statementService;
+}
     @Override
 protected void doGet(HttpServletRequest request,
                      HttpServletResponse response)

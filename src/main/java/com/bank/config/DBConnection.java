@@ -11,9 +11,8 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
- private static final Logger logger =
+    private static final Logger logger =
             LoggerFactory.getLogger(DBConnection.class);
-
 
     private static final HikariDataSource dataSource;
 
@@ -21,11 +20,38 @@ public class DBConnection {
 
         HikariConfig config = new HikariConfig();
 
-        config.setJdbcUrl("jdbc:mysql://192.168.30.156:3306/bankdb");
-        config.setUsername("bankuser");
-        config.setPassword("Bank@123");
+        /*
+         * Use environment variables when provided.
+         * Otherwise use production defaults.
+         */
+        String jdbcUrl = System.getenv(
+                "DB_URL");
 
-        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        String username = System.getenv(
+                "DB_USER");
+
+        String password = System.getenv(
+                "DB_PASSWORD");
+
+        if (jdbcUrl == null || jdbcUrl.isBlank()) {
+            jdbcUrl =
+                "jdbc:mysql://192.168.30.156:3306/bankdb";
+        }
+
+        if (username == null || username.isBlank()) {
+            username = "bankuser";
+        }
+
+        if (password == null || password.isBlank()) {
+            password = "Bank@123";
+        }
+
+        config.setJdbcUrl(jdbcUrl);
+        config.setUsername(username);
+        config.setPassword(password);
+
+        config.setDriverClassName(
+                "com.mysql.cj.jdbc.Driver");
 
         // Pool Configuration
         config.setMaximumPoolSize(10);
@@ -34,15 +60,18 @@ public class DBConnection {
         config.setConnectionTimeout(30000);
         config.setMaxLifetime(1800000);
 
-        // Optional: Name the pool
         config.setPoolName("BankingPool");
 
-        dataSource = new HikariDataSource(config);
+        dataSource =
+                new HikariDataSource(config);
 
-	logger.info("HikariCP Connection Pool Initialized");
+        logger.info(
+                "HikariCP Connection Pool Initialized");
     }
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection()
+            throws SQLException {
+
         return dataSource.getConnection();
     }
 }

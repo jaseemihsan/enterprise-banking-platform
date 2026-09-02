@@ -17,9 +17,15 @@ public class DashboardServlet extends HttpServlet {
     private static final Logger logger =
         LoggerFactory.getLogger(DashboardServlet.class);
 
-    private final DashboardService dashboardService =
-            new DashboardService();
+private final DashboardService dashboardService;
 
+public DashboardServlet() {
+    this.dashboardService = new DashboardService();
+}
+
+DashboardServlet(DashboardService dashboardService) {
+    this.dashboardService = dashboardService;
+}
     @Override
 protected void doGet(HttpServletRequest request,
                      HttpServletResponse response)

@@ -18,12 +18,23 @@ import java.util.List;
     "/customers/update", "/customers/delete"})
 
 public class CustomerServlet extends HttpServlet {
-    
-   private static final Logger logger =
-        LoggerFactory.getLogger(CustomerServlet.class);
 
-    private final CustomerService customerService = new CustomerService();
-    private final AuditLogService auditLogService = new AuditLogService();
+    private static final Logger logger =
+            LoggerFactory.getLogger(CustomerServlet.class);
+
+    private final CustomerService customerService;
+    private final AuditLogService auditLogService;
+
+    public CustomerServlet() {
+        this.customerService = new CustomerService();
+        this.auditLogService = new AuditLogService();
+    }
+
+    public CustomerServlet(CustomerService customerService,
+                           AuditLogService auditLogService) {
+        this.customerService = customerService;
+        this.auditLogService = auditLogService;
+    }
 
     @Override
 protected void doPost(HttpServletRequest request,

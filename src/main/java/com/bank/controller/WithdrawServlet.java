@@ -20,12 +20,19 @@ public class WithdrawServlet extends HttpServlet {
     private static final Logger logger =
         LoggerFactory.getLogger(WithdrawServlet.class);
 
-    private final WithdrawService withdrawService =
-            new WithdrawService();
+private final WithdrawService withdrawService;
+private final AccountService accountService;
 
-    private final AccountService accountService =
-            new AccountService();
+public WithdrawServlet() {
+    this.withdrawService = new WithdrawService();
+    this.accountService = new AccountService();
+}
 
+WithdrawServlet(WithdrawService withdrawService,
+                AccountService accountService) {
+    this.withdrawService = withdrawService;
+    this.accountService = accountService;
+}
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)

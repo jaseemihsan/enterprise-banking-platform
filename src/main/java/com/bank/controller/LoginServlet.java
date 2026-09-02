@@ -23,9 +23,19 @@ public class LoginServlet extends HttpServlet {
     private static final Logger logger =
             LoggerFactory.getLogger(LoginServlet.class);
 
-    private final LoginService loginService = new LoginService();
-    private final AuditLogService auditLogService = new AuditLogService();
+private final LoginService loginService;
+private final AuditLogService auditLogService;
 
+public LoginServlet() {
+    this.loginService = new LoginService();
+    this.auditLogService = new AuditLogService();
+}
+
+LoginServlet(LoginService loginService,
+             AuditLogService auditLogService) {
+    this.loginService = loginService;
+    this.auditLogService = auditLogService;
+}
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)

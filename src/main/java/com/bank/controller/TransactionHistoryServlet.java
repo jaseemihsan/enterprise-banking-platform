@@ -11,8 +11,15 @@ import java.io.IOException;
 @WebServlet("/transactions")
 public class TransactionHistoryServlet extends HttpServlet {
 
-    private final TransactionService transactionService =
-            new TransactionService();
+    private final TransactionService transactionService;
+
+    public TransactionHistoryServlet() {
+        this.transactionService = new TransactionService();
+    }
+
+    TransactionHistoryServlet(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request,
@@ -25,7 +32,5 @@ public class TransactionHistoryServlet extends HttpServlet {
 
         request.getRequestDispatcher("/transaction-history.jsp")
                 .forward(request, response);
-
     }
-
 }

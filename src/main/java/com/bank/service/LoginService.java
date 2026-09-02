@@ -5,7 +5,21 @@ import com.bank.model.User;
 
 public class LoginService {
 
-    private final UserDAO userDAO = new UserDAO();
+    private final UserDAO userDAO;
+
+    /*
+     * Default constructor used by the application.
+     */
+    public LoginService() {
+        this.userDAO = new UserDAO();
+    }
+
+    /*
+     * Constructor used for unit testing.
+     */
+    LoginService(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 
     public User authenticate(String username, String password) {
 

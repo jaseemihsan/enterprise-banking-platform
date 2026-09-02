@@ -1,6 +1,7 @@
 package com.bank.service;
 
-import com.bank.config.DBConnection;
+import com.bank.config.ConnectionProvider;
+import com.bank.config.DBConnectionProvider;
 import com.bank.dao.AccountDAO;
 import com.bank.dao.TransactionDAO;
 import com.bank.model.Account;
@@ -13,38 +14,58 @@ import java.sql.Connection;
 
 public class DepositService {
 
-    private final AccountDAO accountDAO = new AccountDAO();
-    private final TransactionDAO transactionDAO = new TransactionDAO();
+    private final AccountDAO accountDAO;
+    private final TransactionDAO transactionDAO;
+    private final ConnectionProvider connectionProvider;
 
-    public boolean deposit(int accountId,
-                           BigDecimal amount,
-                           String remarks) {
+    /*
+     * Default constructor used by the application.
+     */
+    public DepositService() {
+        this.accountDAO = new AccountDAO();
+        this.transactionDAO = new TransactionDAO();
+        this.connectionProvider = new DBConnectionProvider();
+
+    }
+
+    /*
+     * Constructor used by unit tests.
+     */
+    DepositService(
+            AccountDAO accountDAO,
+            TransactionDAO transactionDAO, 
+	    ConnectionProvider connectionProvider) {
+
+
+        this.accountDAO = accountDAO;
+        this.transactionDAO = transactionDAO;
+     	this.connectionProvider = connectionProvider;
+
+    }
+
+    public boolean deposit(
+            int accountId,
+            BigDecimal amount,
+            String remarks) {
 
         Connection connection = null;
 
         try {
 
-            connection = DBConnection.getConnection();
+            connection = connectionProvider.getConnection();
 
-            /*
-             * Start Database Transaction
-             */
             connection.setAutoCommit(false);
 
-            /*
-             * Load Account
-             */
             Account account =
-        accountDAO.getAccountById(
-                connection,
-                accountId);
+                    accountDAO.getAccountById(
+                            connection,
+                            accountId);
 
             if (account == null) {
 
                 connection.rollback();
 
                 return false;
-
             }
 
             if (!"ACTIVE".equalsIgnoreCase(account.getStatus())) {
@@ -52,17 +73,14 @@ public class DepositService {
                 connection.rollback();
 
                 return false;
-
             }
 
-	    BigDecimal balanceBefore = account.getBalance();
+            BigDecimal balanceBefore =
+                    account.getBalance();
 
-BigDecimal balanceAfter =
-        balanceBefore.add(amount);
+            BigDecimal balanceAfter =
+                    balanceBefore.add(amount);
 
-            /*
-             * Update Balance
-             */
             boolean updated =
                     accountDAO.updateBalance(
                             connection,
@@ -74,12 +92,8 @@ BigDecimal balanceAfter =
                 connection.rollback();
 
                 return false;
-
             }
 
-            /*
-             * Create Transaction
-             */
             Transaction transaction =
                     new Transaction();
 
@@ -93,15 +107,14 @@ BigDecimal balanceAfter =
             transaction.setReferenceNo(
                     ReferenceGenerator.generateReference());
 
-	    transaction.setBalanceBefore(balanceBefore);
+            transaction.setBalanceBefore(
+                    balanceBefore);
 
-            transaction.setBalanceAfter(balanceAfter);
+            transaction.setBalanceAfter(
+                    balanceAfter);
 
             transaction.setRemarks(remarks);
 
-            /*
-             * Save Transaction
-             */
             boolean inserted =
                     transactionDAO.saveTransaction(
                             connection,
@@ -112,12 +125,8 @@ BigDecimal balanceAfter =
                 connection.rollback();
 
                 return false;
-
             }
 
-            /*
-             * Commit
-             */
             connection.commit();
 
             return true;
@@ -129,9 +138,7 @@ BigDecimal balanceAfter =
             try {
 
                 if (connection != null) {
-
                     connection.rollback();
-
                 }
 
             } catch (Exception ignored) {
@@ -144,18 +151,13 @@ BigDecimal balanceAfter =
                 if (connection != null) {
 
                     connection.setAutoCommit(true);
-
                     connection.close();
-
                 }
 
             } catch (Exception ignored) {
             }
-
         }
 
         return false;
-
     }
-
 }

@@ -1,139 +1,259 @@
 package com.bank.service;
 
-import com.bank.config.DBConnection;
+import com.bank.config.ConnectionProvider;
+import com.bank.config.DBConnectionProvider;
 import com.bank.dao.AccountDAO;
 import com.bank.dao.TransactionDAO;
 import com.bank.model.Account;
 import com.bank.model.Transaction;
-import com.bank.service.TransferService;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 
 public class TransferService {
 
-    private final AccountDAO accountDAO =
-            new AccountDAO();
+    private final AccountDAO accountDAO;
+    private final TransactionDAO transactionDAO;
+    private final ConnectionProvider connectionProvider;
 
-    private final TransactionDAO transactionDAO =
-            new TransactionDAO();
+    /*
+     * Default constructor used by the application.
+     */
+    public TransferService() {
+
+        this.accountDAO = new AccountDAO();
+        this.transactionDAO = new TransactionDAO();
+        this.connectionProvider = new DBConnectionProvider();
+    }
+
+    /*
+     * Constructor used by unit tests.
+     */
+    TransferService(
+            AccountDAO accountDAO,
+            TransactionDAO transactionDAO,
+            ConnectionProvider connectionProvider) {
+
+        this.accountDAO = accountDAO;
+        this.transactionDAO = transactionDAO;
+        this.connectionProvider = connectionProvider;
+    }
 
     public boolean transfer(
             int fromAccountId,
             int toAccountId,
-            java.math.BigDecimal amount,
+            BigDecimal amount,
             String remarks) {
 
         Connection connection = null;
 
         try {
 
-            connection = DBConnection.getConnection();
+            connection =
+                    connectionProvider.getConnection();
 
             connection.setAutoCommit(false);
 
-        Account fromAccount =
-        accountDAO.getAccountById(connection, fromAccountId);
+            Account fromAccount =
+                    accountDAO.getAccountById(
+                            connection,
+                            fromAccountId);
 
-Account toAccount =
-        accountDAO.getAccountById(connection, toAccountId);
+            Account toAccount =
+                    accountDAO.getAccountById(
+                            connection,
+                            toAccountId);
 
-       if (fromAccount == null || toAccount == null) {
-    return false;
-}
+            /*
+             * Account validation
+             */
+            if (fromAccount == null ||
+                    toAccount == null) {
 
-if (fromAccountId == toAccountId) {
-    return false;
-}
+                connection.rollback();
 
-if (amount.compareTo(java.math.BigDecimal.ZERO) <= 0) {
-    return false;
-}
+                return false;
+            }
 
-if (!"ACTIVE".equalsIgnoreCase(fromAccount.getStatus())) {
-    return false;
-}
+            /*
+             * Cannot transfer to same account
+             */
+            if (fromAccountId == toAccountId) {
 
-if (!"ACTIVE".equalsIgnoreCase(toAccount.getStatus())) {
-    return false;
-}
+                connection.rollback();
 
-if (fromAccount.getBalance().compareTo(amount) < 0) {
-    return false;
-}
+                return false;
+            }
 
-java.math.BigDecimal newFromBalance =
-        fromAccount.getBalance().subtract(amount);
+            /*
+             * Validate amount
+             */
+            if (amount == null ||
+                    amount.compareTo(BigDecimal.ZERO) <= 0) {
 
-java.math.BigDecimal newToBalance =
-        toAccount.getBalance().add(amount);
+                connection.rollback();
 
-	boolean debitSuccess =
-        accountDAO.updateBalance(
-                connection,
-                fromAccountId,
-                newFromBalance
-        );
+                return false;
+            }
 
-if (!debitSuccess) {
-    return false;
-}
+            /*
+             * Source account must be active
+             */
+            if (!"ACTIVE".equalsIgnoreCase(
+                    fromAccount.getStatus())) {
 
-boolean creditSuccess =
-        accountDAO.updateBalance(
-                connection,
-                toAccountId,
-                newToBalance
-        );
+                connection.rollback();
 
-if (!creditSuccess) {
-    return false;
-}
+                return false;
+            }
 
-// Generate Reference Number
-String referenceNo =
-        "TRX" + System.currentTimeMillis();
+            /*
+             * Destination account must be active
+             */
+            if (!"ACTIVE".equalsIgnoreCase(
+                    toAccount.getStatus())) {
 
-	// Create Debit Transaction
-Transaction debitTransaction = new Transaction();
+                connection.rollback();
 
-debitTransaction.setAccountId(fromAccountId);
-debitTransaction.setTransactionType("TRANSFER_DEBIT");
-debitTransaction.setAmount(amount);
-debitTransaction.setBalanceBefore(fromAccount.getBalance());
-debitTransaction.setBalanceAfter(newFromBalance);
-debitTransaction.setReferenceNo(referenceNo);
-debitTransaction.setRemarks(remarks);
+                return false;
+            }
 
-boolean debitTransactionSaved =
-        transactionDAO.saveTransaction(
-                connection,
-                debitTransaction
-        );
+            /*
+             * Check sufficient balance
+             */
+            if (fromAccount.getBalance()
+                    .compareTo(amount) < 0) {
 
-if (!debitTransactionSaved) {
-    return false;
-}
+                connection.rollback();
 
-Transaction creditTransaction = new Transaction();
+                return false;
+            }
 
-creditTransaction.setAccountId(toAccountId);
-creditTransaction.setTransactionType("TRANSFER_CREDIT");
-creditTransaction.setAmount(amount);
-creditTransaction.setBalanceBefore(toAccount.getBalance());
-creditTransaction.setBalanceAfter(newToBalance);
-creditTransaction.setReferenceNo(referenceNo);
-creditTransaction.setRemarks(remarks);
+            BigDecimal newFromBalance =
+                    fromAccount.getBalance()
+                            .subtract(amount);
 
-boolean creditTransactionSaved =
-        transactionDAO.saveTransaction(
-                connection,
-                creditTransaction
-        );
+            BigDecimal newToBalance =
+                    toAccount.getBalance()
+                            .add(amount);
 
-if (!creditTransactionSaved) {
-    return false;
-}
+            /*
+             * Debit source account
+             */
+            boolean debitSuccess =
+                    accountDAO.updateBalance(
+                            connection,
+                            fromAccountId,
+                            newFromBalance);
 
+            if (!debitSuccess) {
+
+                connection.rollback();
+
+                return false;
+            }
+
+            /*
+             * Credit destination account
+             */
+            boolean creditSuccess =
+                    accountDAO.updateBalance(
+                            connection,
+                            toAccountId,
+                            newToBalance);
+
+            if (!creditSuccess) {
+
+                connection.rollback();
+
+                return false;
+            }
+
+            /*
+             * Generate common reference number
+             */
+            String referenceNo =
+                    "TRX" + System.currentTimeMillis();
+
+            /*
+             * Debit transaction
+             */
+            Transaction debitTransaction =
+                    new Transaction();
+
+            debitTransaction.setAccountId(
+                    fromAccountId);
+
+            debitTransaction.setTransactionType(
+                    "TRANSFER_DEBIT");
+
+            debitTransaction.setAmount(amount);
+
+            debitTransaction.setBalanceBefore(
+                    fromAccount.getBalance());
+
+            debitTransaction.setBalanceAfter(
+                    newFromBalance);
+
+            debitTransaction.setReferenceNo(
+                    referenceNo);
+
+            debitTransaction.setRemarks(
+                    remarks);
+
+            boolean debitTransactionSaved =
+                    transactionDAO.saveTransaction(
+                            connection,
+                            debitTransaction);
+
+            if (!debitTransactionSaved) {
+
+                connection.rollback();
+
+                return false;
+            }
+
+            /*
+             * Credit transaction
+             */
+            Transaction creditTransaction =
+                    new Transaction();
+
+            creditTransaction.setAccountId(
+                    toAccountId);
+
+            creditTransaction.setTransactionType(
+                    "TRANSFER_CREDIT");
+
+            creditTransaction.setAmount(amount);
+
+            creditTransaction.setBalanceBefore(
+                    toAccount.getBalance());
+
+            creditTransaction.setBalanceAfter(
+                    newToBalance);
+
+            creditTransaction.setReferenceNo(
+                    referenceNo);
+
+            creditTransaction.setRemarks(
+                    remarks);
+
+            boolean creditTransactionSaved =
+                    transactionDAO.saveTransaction(
+                            connection,
+                            creditTransaction);
+
+            if (!creditTransactionSaved) {
+
+                connection.rollback();
+
+                return false;
+            }
+
+            /*
+             * Everything succeeded
+             */
             connection.commit();
 
             return true;
@@ -144,32 +264,27 @@ if (!creditTransactionSaved) {
 
             try {
 
-                if(connection != null){
-
+                if (connection != null) {
                     connection.rollback();
-
                 }
 
-            } catch (Exception ignored){}
+            } catch (Exception ignored) {
+            }
 
         } finally {
 
             try {
 
-                if(connection != null){
+                if (connection != null) {
 
                     connection.setAutoCommit(true);
-
                     connection.close();
-
                 }
 
-            } catch (Exception ignored){}
-
+            } catch (Exception ignored) {
+            }
         }
 
         return false;
-
     }
-
 }

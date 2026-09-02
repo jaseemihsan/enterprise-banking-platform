@@ -18,28 +18,34 @@ import org.slf4j.LoggerFactory;
 public class DepositServlet extends HttpServlet {
 
     private static final Logger logger =
-        LoggerFactory.getLogger(DepositServlet.class);
+            LoggerFactory.getLogger(DepositServlet.class);
 
-    private final DepositService depositService =
-            new DepositService();
+    private final DepositService depositService;
+    private final AccountService accountService;
 
-    @Override
-protected void doGet(HttpServletRequest request,
-                     HttpServletResponse response)
-        throws ServletException, IOException {
-
-    AccountService accountService =
-            new AccountService();
-
-    request.setAttribute(
-            "accounts",
-            accountService.getActiveAccounts());
-
-    request.getRequestDispatcher("/deposit.jsp")
-            .forward(request, response);
-
+    public DepositServlet() {
+        this.depositService = new DepositService();
+        this.accountService = new AccountService();
     }
 
+    DepositServlet(DepositService depositService,
+                   AccountService accountService) {
+        this.depositService = depositService;
+        this.accountService = accountService;
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setAttribute(
+                "accounts",
+                accountService.getActiveAccounts());
+
+        request.getRequestDispatcher("/deposit.jsp")
+                .forward(request, response);
+    }
     @Override
 protected void doPost(HttpServletRequest request,
                       HttpServletResponse response)
