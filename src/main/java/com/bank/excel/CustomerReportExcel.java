@@ -19,7 +19,7 @@ public class CustomerReportExcel {
                                 HttpServletResponse response)
             throws IOException {
 
-        Workbook workbook = new XSSFWorkbook();
+       try ( Workbook workbook = new XSSFWorkbook()) {
 
         Sheet sheet = workbook.createSheet("Customers");
 
@@ -129,6 +129,6 @@ sheet.setAutoFilter(
 
         workbook.write(response.getOutputStream());
 
-        workbook.close();
+       }
     }
 }
