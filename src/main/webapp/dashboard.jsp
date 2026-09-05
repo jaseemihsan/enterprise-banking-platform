@@ -198,6 +198,8 @@ List<TransactionTrend> transactionTrend =
 
                 <table class="table table-borderless">
 
+			<caption>Dashboard Statistics</caption>
+
                     <tr>
                         <th>Customers</th>
                         <td><%=statistics.getCustomerCount()%></td>

@@ -70,31 +70,32 @@ if(selectedAccount != null){
 %>
 
 <table border="1" cellpadding="8">
+    <caption>Account Details</caption>
 
-<tr>
-<td><b>Account Number</b></td>
-<td><%=selectedAccount.getAccountNumber()%></td>
-</tr>
+    <tr>
+        <th scope="row">Account Number</th>
+        <td><%=selectedAccount.getAccountNumber()%></td>
+    </tr>
 
-<tr>
-<td><b>Customer</b></td>
-<td><%=selectedAccount.getCustomerName()%></td>
-</tr>
+    <tr>
+        <th scope="row">Customer</th>
+        <td><%=selectedAccount.getCustomerName()%></td>
+    </tr>
 
-<tr>
-<td><b>Account Type</b></td>
-<td><%=selectedAccount.getAccountType()%></td>
-</tr>
+    <tr>
+        <th scope="row">Account Type</th>
+        <td><%=selectedAccount.getAccountType()%></td>
+    </tr>
 
-<tr>
-<td><b>Status</b></td>
-<td><%=selectedAccount.getStatus()%></td>
-</tr>
+    <tr>
+        <th scope="row">Status</th>
+        <td><%=selectedAccount.getStatus()%></td>
+    </tr>
 
-<tr>
-<td><b>Current Balance</b></td>
-<td><%=df.format(selectedAccount.getBalance())%></td>
-</tr>
+    <tr>
+        <th scope="row">Current Balance</th>
+        <td><%=df.format(selectedAccount.getBalance())%></td>
+    </tr>
 
 </table>
 

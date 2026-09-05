@@ -273,6 +273,9 @@ if (transactions != null) {
 
 <table class="table table-striped table-hover table-bordered">
 
+<caption><%= title %></caption>
+
+
 <thead class="table-dark text-center">
 
 <tr>
@@ -365,6 +368,9 @@ if (customers != null) {
 
 <table class="table table-striped table-hover table-bordered">
 
+<caption>Customer Report</caption>
+
+
 <thead class="table-dark text-center">
 
 <tr>
@@ -440,6 +446,9 @@ if (accounts != null) {
 </div>
 
 <table class="table table-striped table-hover table-bordered">
+
+<caption>Account Report</caption>
+
 
 <thead class="table-dark text-center">
 
