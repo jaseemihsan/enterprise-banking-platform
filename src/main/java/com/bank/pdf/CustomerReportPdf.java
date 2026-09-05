@@ -15,7 +15,7 @@ public class CustomerReportPdf {
                        HttpServletResponse response)
             throws IOException, DocumentException {
 
-        Document document = new Document(PageSize.A4);
+        try (Document document = new Document(PageSize.A4)) {
 
         PdfWriter.getInstance(
                 document,
@@ -60,7 +60,6 @@ public class CustomerReportPdf {
         }
 
         document.add(table);
-
-        document.close();
+      }
     }
 }

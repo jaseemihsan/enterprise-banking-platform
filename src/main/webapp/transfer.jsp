@@ -8,7 +8,7 @@ List<Account> accounts =
 %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Fund Transfer</title>
 

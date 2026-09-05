@@ -13,14 +13,20 @@ import java.util.List;
 
 public class AccountReportExcel {
 
-    public static void generate(List<Account> accounts,
-                                HttpServletResponse response)
-            throws IOException {
+public static void generate(List<Account> accounts,
+                            HttpServletResponse response)
+        throws IOException {
 
-        Workbook workbook = new XSSFWorkbook();
+    response.setContentType(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+    response.setHeader(
+            "Content-Disposition",
+            "attachment; filename=account-report.xlsx");
+
+    try (Workbook workbook = new XSSFWorkbook()) {
 
         Sheet sheet = workbook.createSheet("Accounts");
-
         Row titleRow = sheet.createRow(0);
 
         Cell titleCell = titleRow.createCell(0);
@@ -138,7 +144,6 @@ public class AccountReportExcel {
                 "attachment; filename=account-report.xlsx");
 
         workbook.write(response.getOutputStream());
-
-        workbook.close();
+      }
     }
 }

@@ -6,7 +6,7 @@
 <%@ include file="includes/navbar.jsp" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>User Management</title>
 
@@ -28,15 +28,18 @@
 
     <table class="table table-bordered table-striped">
 
+<caption>Users List</caption>
+
+
         <thead class="table-dark">
 
         <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Status</th>
-	    <th>Created</th>
-            <th>Actions</th>
+            <th scope="col">ID</th>
+            <th scope="col">Username</th>
+            <th scope="col">Role</th>
+            <th scope="col">Status</th>
+	    <th scope="col">Created</th>
+            <th scope="col">Actions</th>
         </tr>
 
         </thead>

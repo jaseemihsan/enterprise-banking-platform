@@ -5,7 +5,7 @@ User user = (User) request.getAttribute("user");
 %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Edit User</title>
 

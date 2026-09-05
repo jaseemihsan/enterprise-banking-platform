@@ -31,7 +31,7 @@ pipeline {
 
         stage('Unit Test') {
             steps {
-                sh 'mvn verify'
+                sh 'mvn clean test jacoco:report'
             }
         }
 
@@ -51,7 +51,8 @@ pipeline {
                             mvn sonar:sonar \
                               -Dsonar.projectKey=enterprise-banking-platform \
                               -Dsonar.projectName=EnterpriseBanking \
-                              -Dsonar.token=$SONAR_TOKEN
+                              -Dsonar.token=$SONAR_TOKEN \
+                              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                         '''
                     }
                 }

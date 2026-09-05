@@ -6,7 +6,7 @@ Customer customer = (Customer) request.getAttribute("customer");
 %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Edit Customer</title>
 </head>

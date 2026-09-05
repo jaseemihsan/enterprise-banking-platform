@@ -22,59 +22,80 @@ public class DashboardDAO {
         private static final Logger logger =
         LoggerFactory.getLogger(DashboardDAO.class);
 
-    public Dashboard getDashboardStats() {
+public Dashboard getDashboardStats() {
 
-        Dashboard dashboard = new Dashboard();
+    Dashboard dashboard = new Dashboard();
 
-        try (Connection connection = DBConnection.getConnection()) {
+    String customerSql =
+            "SELECT COUNT(*) FROM customers";
 
-            PreparedStatement ps1 =
-                    connection.prepareStatement(
-                            "SELECT COUNT(*) FROM customers");
+    String accountSql =
+            "SELECT COUNT(*) FROM accounts";
 
-            ResultSet rs1 = ps1.executeQuery();
+    String transactionSql =
+            "SELECT COUNT(*) FROM transactions";
 
-            if (rs1.next()) {
-                dashboard.setTotalCustomers(rs1.getInt(1));
-            }
+    String balanceSql =
+            "SELECT COALESCE(SUM(balance),0) FROM accounts";
 
-            PreparedStatement ps2 =
-                    connection.prepareStatement(
-                            "SELECT COUNT(*) FROM accounts");
+    try (Connection connection = DBConnection.getConnection();
 
-            ResultSet rs2 = ps2.executeQuery();
+         PreparedStatement ps1 =
+                 connection.prepareStatement(customerSql);
+         ResultSet rs1 = ps1.executeQuery()) {
 
-            if (rs2.next()) {
-                dashboard.setTotalAccounts(rs2.getInt(1));
-            }
-
-            PreparedStatement ps3 =
-                    connection.prepareStatement(
-                            "SELECT COUNT(*) FROM transactions");
-
-            ResultSet rs3 = ps3.executeQuery();
-
-            if (rs3.next()) {
-                dashboard.setTotalTransactions(rs3.getInt(1));
-            }
-
-	    PreparedStatement ps4 =
-        connection.prepareStatement(
-                "SELECT COALESCE(SUM(balance),0) FROM accounts");
-
-ResultSet rs4 = ps4.executeQuery();
-
-if (rs4.next()) {
-    dashboard.setTotalBalance(rs4.getBigDecimal(1));
-}
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (rs1.next()) {
+            dashboard.setTotalCustomers(rs1.getInt(1));
         }
 
-        return dashboard;
+    } catch (Exception e) {
+        logger.error("Error loading customer count", e);
     }
 
+    try (Connection connection = DBConnection.getConnection();
+
+         PreparedStatement ps2 =
+                 connection.prepareStatement(accountSql);
+         ResultSet rs2 = ps2.executeQuery()) {
+
+        if (rs2.next()) {
+            dashboard.setTotalAccounts(rs2.getInt(1));
+        }
+
+    } catch (Exception e) {
+        logger.error("Error loading account count", e);
+    }
+
+    try (Connection connection = DBConnection.getConnection();
+
+         PreparedStatement ps3 =
+                 connection.prepareStatement(transactionSql);
+         ResultSet rs3 = ps3.executeQuery()) {
+
+        if (rs3.next()) {
+            dashboard.setTotalTransactions(rs3.getInt(1));
+        }
+
+    } catch (Exception e) {
+        logger.error("Error loading transaction count", e);
+    }
+
+    try (Connection connection = DBConnection.getConnection();
+
+         PreparedStatement ps4 =
+                 connection.prepareStatement(balanceSql);
+         ResultSet rs4 = ps4.executeQuery()) {
+
+        if (rs4.next()) {
+            dashboard.setTotalBalance(rs4.getBigDecimal(1));
+        }
+
+    } catch (Exception e) {
+        logger.error("Error loading total balance", e);
+    }
+
+    return dashboard;
+}
 
      public List<Customer> getRecentCustomers() {
 

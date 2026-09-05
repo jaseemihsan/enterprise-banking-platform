@@ -138,16 +138,24 @@ if(transactions != null){
 
 <table border="1" cellpadding="5" cellspacing="0" width="100%">
 
+<caption>Transaction History</caption>
+
+<thead>
+
 <tr>
-    <th align="center">#</th>
-    <th align="center">Date</th>
-    <th align="center">Type</th>
-    <th align="center">Amount</th>
-    <th align="center">Balance Before</th>
-    <th align="center">Balance After</th>
-    <th align="center">Reference</th>
-    <th align="center">Remarks</th>
+    <th scope="col" align="center">#</th>
+    <th scope="col" align="center">Date</th>
+    <th scope="col" align="center">Type</th>
+    <th scope="col" align="center">Amount</th>
+    <th scope="col" align="center">Balance Before</th>
+    <th scope="col" align="center">Balance After</th>
+    <th scope="col" align="center">Reference</th>
+    <th scope="col" align="center">Remarks</th>
 </tr>
+
+</thead> 
+
+<tbody>
 
 <%
 for(Transaction t : transactions){
@@ -168,6 +176,7 @@ for(Transaction t : transactions){
 }
 %>
 
+</tbody>
 </table>
 
 <%

@@ -16,23 +16,26 @@ List<Transaction> transactions =
 
 <table class="table table-bordered table-striped">
 
+<caption>Customer Tansactions</caption>
+
+
 <thead class="table-dark">
 
 <tr>
 
-<th>Reference</th>
+<th scope="col">Reference</th>
 
-<th>Account</th>
+<th scope="col">Account</th>
 
-<th>Type</th>
+<th scope="col">Type</th>
 
-<th>Amount</th>
+<th scope="col">Amount</th>
 
-<th>Before</th>
+<th scope="col">Before</th>
 
-<th>After</th>
+<th scope="col">After</th>
 
-<th>Date</th>
+<th scope="col">Date</th>
 
 </tr>
 

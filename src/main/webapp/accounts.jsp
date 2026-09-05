@@ -183,21 +183,23 @@ Search
 
 <table class="table table-striped table-bordered">
 
+<caption>Customer Account List</caption>
+
 <thead class="table-dark">
 
 <tr>
 
-<th>ID</th>
+<th scope="col">ID</th>
 
-<th>Account Number</th>
+<th scope="col">Account Number</th>
 
-<th>Customer</th>
+<th scope="col">Customer</th>
 
-<th>Type</th>
+<th scope="col">Type</th>
 
-<th>Balance</th>
+<th scope="col">Balance</th>
 
-<th>Status</th>
+<th scope="col">Status</th>
 
 <th width="180">
 
